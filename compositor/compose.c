@@ -16,7 +16,8 @@ typedef struct _VideoCompositor {
 typedef struct _OverlayVideo {
   GstElement *source;
   GstElement *decode;
-  VideoCompositor compositor;
+  GstElement *convert;
+  VideoCompositor *compositor;
   int overlayCount;
 } OverlayVideo;
 
@@ -43,7 +44,7 @@ int main(int argc, char *argv[]) {
   videoCompositor.imagefreeze = gst_element_factory_make ("imagefreeze", "imagefreeze");
   videoCompositor.compositor = gst_element_factory_make("compositor", "compositor");
   videoCompositor.convert = gst_element_factory_make("videoconvert", "videoconvert");
-  videoCompositor.sink = gst_element_factory_make("autovideosink", "finalsink");
+  videoCompositor.sink = gst_element_factory_make("filesink", "finalsink");
 
   videoCompositor.pipeline = gst_pipeline_new ("compositor_pipeline");
 
@@ -62,24 +63,27 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  if (!gst_element_link_many (videoCompositor.imagefreeze, videoCompositor.compositor, videoCompositor.convert, videoCompositor.sink, NULL)) {
+  // if (!gst_element_link_many (videoCompositor.imagefreeze, videoCompositor.compositor, videoCompositor.convert, videoCompositor.sink, NULL)) {
+  if (!gst_element_link_many (videoCompositor.compositor, videoCompositor.convert, videoCompositor.sink, NULL)) {
     g_printerr ("Elements could not be linked.\n");
     gst_object_unref (videoCompositor.pipeline);
     return -1;
   }
 
-  g_object_set (videoCompositor.background, "location", "./resources/street.jpg", NULL);
+  // g_object_set (videoCompositor.background, "location", "./resources/street.jpg", NULL);
+  g_object_set (videoCompositor.background, "location", "./resources/cars/1.mp4", NULL);
+  g_object_set (videoCompositor.sink, "location", "./file", NULL);
 
   /* Connect to the pad-added signal */
   g_signal_connect (videoCompositor.decode, "pad-added", G_CALLBACK (pad_added_handler), &videoCompositor);
-add_overlay_video("./resources/cars/1.mov", videoCompositor);
+  add_overlay_video("./resources/cars/1.mp4", videoCompositor);
+
   ret = gst_element_set_state (videoCompositor.pipeline, GST_STATE_PLAYING);
   if (ret == GST_STATE_CHANGE_FAILURE) {
     g_printerr ("Unable to set the pipeline to the playing state.\n");
     gst_object_unref (videoCompositor.pipeline);
     return -1;
   }
-
   
 
   /* Listen to the bus */
@@ -133,7 +137,7 @@ add_overlay_video("./resources/cars/1.mov", videoCompositor);
 
 /* This function will be called by the pad-added signal */
 static void pad_added_handler (GstElement *src, GstPad *new_pad, VideoCompositor *data) {
-  GstPad *sink_pad = gst_element_get_static_pad (data->imagefreeze, "sink");
+  GstPad *sink_pad = gst_element_get_request_pad (data->compositor, "sink");
   GstPadLinkReturn ret;
   GstCaps *new_pad_caps = NULL;
   GstStructure *new_pad_struct = NULL;
@@ -175,36 +179,56 @@ exit:
 
 static int add_overlay_video (char videoUri[], VideoCompositor compositor) {
   GstStateChangeReturn ret;
-  OverlayVideo video;
-  video.compositor =  compositor;
-
-  compositor.overlayCount++;
+  OverlayVideo *video = (OverlayVideo*) malloc (sizeof(OverlayVideo));
+  video->compositor =  &compositor;
+  
+  compositor.overlayCount = 1 + compositor.overlayCount;
   char bgName[20];
   sprintf(bgName, "background%d", compositor.overlayCount);
   char decodeName[20];
   sprintf(decodeName, "decode%d", compositor.overlayCount);
+  char convertName[20];
+  sprintf(convertName, "videoconvert%d", compositor.overlayCount);
 
-  video.source = gst_element_factory_make ("filesrc", bgName);
-  video.decode = gst_element_factory_make ("decodebin", decodeName);
-  video.overlayCount = compositor.overlayCount;
+  video->source = gst_element_factory_make ("filesrc", bgName);
+  video->decode = gst_element_factory_make ("decodebin", decodeName);
+  video->convert = gst_element_factory_make("videoconvert", convertName);
+  video->overlayCount = compositor.overlayCount;
 
-  if (!video.source || !video.decode) {
+  if (!video->source || !video->decode || !video->convert) {
     g_printerr ("Not all elements could be created.\n");
     return -1;
   }
 
-  gst_bin_add_many (GST_BIN (compositor.pipeline), video.source, video.decode, NULL);
+  gst_bin_add_many (GST_BIN (compositor.pipeline), video->source, video->decode, video->convert, NULL);
   
-  if (!gst_element_link_many (video.source, video.decode, NULL)) {
+  if (!gst_element_link_many (video->source, video->decode, NULL)) {
+    g_printerr ("Elements could not be linked.\n");
+    gst_object_unref (compositor.pipeline);
+    return -1;
+  }
+  
+  if (!gst_element_link_many (video->convert, compositor.compositor, NULL)) {
     g_printerr ("Elements could not be linked.\n");
     gst_object_unref (compositor.pipeline);
     return -1;
   }
 
-  g_object_set (video.source, "location", videoUri, NULL);
+  /*
+  // In info logs, I got no sink for compositor, so I try to manually link sink and src which fails.
+  GstPad *compositorSinkPad = gst_element_get_request_pad(compositor.compositor, "sink_%u");
+  GstPad *videoconvertSrcPad = gst_element_get_static_pad(video->convert, "src");
+  if (!gst_pad_link(videoconvertSrcPad, compositorSinkPad)) {
+    g_printerr ("Elements could not be linked src sink.\n");
+    gst_object_unref (compositor.pipeline);
+    return -1;
+  }
+  */
+
+  g_object_set (video->source, "location", videoUri, NULL);
 
   /* Connect to the pad-added signal */
-  g_signal_connect (video.decode, "pad-added", G_CALLBACK (video_pad_added_handler), &video);
+  g_signal_connect (video->decode, "pad-added", G_CALLBACK (video_pad_added_handler), video);
 
   ret = gst_element_set_state (compositor.pipeline, GST_STATE_PLAYING);
   if (ret == GST_STATE_CHANGE_FAILURE) {
@@ -212,15 +236,14 @@ static int add_overlay_video (char videoUri[], VideoCompositor compositor) {
     gst_object_unref (compositor.pipeline);
     return -1;
   }
+  return 0;
 }
 
 /* This function will be called by the pad-added signal */
 static void video_pad_added_handler (GstElement *src, GstPad *new_pad, OverlayVideo *data) {
-  g_print ("I am here");
-  char sink[20];
-  sprintf(sink, "sink_%d", data->overlayCount);
-  g_print("I am here %d xxx", data->overlayCount);
-  GstPad *sink_pad = gst_element_get_static_pad (data->compositor.compositor, "sink_%u");
+  gboolean done = FALSE;
+  GstPad *sink_pad = gst_element_get_static_pad (data->convert, "sink");
+
   GstPadLinkReturn ret;
   GstCaps *new_pad_caps = NULL;
   GstStructure *new_pad_struct = NULL;
@@ -242,7 +265,7 @@ static void video_pad_added_handler (GstElement *src, GstPad *new_pad, OverlayVi
     g_print ("It has type '%s' which is not raw video. Ignoring.\n", new_pad_type);
     goto exit;
   }
-
+  
   /* Attempt the link */
   ret = gst_pad_link (new_pad, sink_pad);
   if (GST_PAD_LINK_FAILED (ret)) {
