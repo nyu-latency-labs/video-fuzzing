@@ -77,8 +77,11 @@ int main(int argc, char *argv[])
     gboolean terminate = FALSE;
 
     // GstElement* pipeline = gst_parse_launch("filesrc location=\"./resources/street.jpg\" ! decodebin ! imagefreeze num-buffers=200 ! videoconvert ! compositor name=composite ! x264enc ! mp4mux ! filesink location=./file.mp4 filesrc location=\"./resources/cars/1.mp4\" ! video/x-raw, width=100, height=100! decodebin ! videoconvert ! composite.", &err);
-    // GstElement *pipeline = gst_parse_launch("filesrc location=./resources/street.jpg ! decodebin ! imagefreeze name=\"imagefreeze\" ! videoconvert  ! x264enc ! h264parse ! mp4mux reserved-moov-update-period=100000 ! filesink location=./file.mp4", &err);
-    GstElement *pipeline = gst_parse_launch("filesrc location=./resources/cars/1.mp4 name=\"imagefreeze\" ! decodebin ! videoconvert  ! x264enc ! h264parse ! mp4mux reserved-moov-update-period=100000 ! filesink location=./file.mp4", &err);
+    GstElement *pipeline = gst_parse_launch("filesrc location=./resources/street.jpg ! decodebin ! imagefreeze name=\"imagefreeze\" num-buffers=500 ! videoconvert ! video/x-raw,framerate=\(fraction\)25/1 ! compositor name=composite ! x264enc ! h264parse ! mp4mux reserved-moov-update-period=100000 ! filesink location=./file.mp4  filesrc location=./resources/cars/1.mp4 ! video/x-raw, width=100, height=100! decodebin ! videoconvert ! composite.", &err);
+    
+    // GstElement *pipeline = gst_parse_launch("imagesequencesrc location=./resources/street.jpg stop-index=-1 framerate=24/1 ! decodebin ! videoconvert  ! x264enc ! h264parse ! mp4mux reserved-moov-update-period=100000 ! filesink location=./file.mp4", &err);
+    
+    // GstElement *pipeline = gst_parse_launch("filesrc location=./resources/cars/1.mp4 name=\"imagefreeze\" ! decodebin ! videoconvert  ! x264enc ! h264parse ! mp4mux reserved-moov-update-period=100000 ! filesink location=./file.mp4", &err);
     // gst-launch-1.0 filesrc location=./resources/cars/1.mp4 ! decodebin ! videoconvert ! x264enc ! mp4mux ! filesink location=./gg.mp4
     // gst-launch-1.0 filesrc location=./resources/street.jpg ! decodebin ! imagefreeze num-buffers=100 ! videoconvert  ! x264enc ! mp4mux reserved-moov-update-period=100000000 ! filesink location=./ggg.mp4    
 
@@ -86,7 +89,7 @@ int main(int argc, char *argv[])
     gst_bus_add_watch(bus, bus_call, loop);
     gst_object_unref(bus);
     
-    // g_timeout_add_seconds(15, callback, pipeline);
+    g_timeout_add_seconds(15, callback, pipeline);
     
     gst_element_set_state(pipeline, GST_STATE_PLAYING);
     g_print("run loop\n");
