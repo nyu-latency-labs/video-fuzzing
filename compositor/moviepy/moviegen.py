@@ -1,5 +1,7 @@
 # Import everything needed to edit video clips
 from moviepy.editor import *
+import random
+import math
 
 class VideoState:
     location = "../resources/cars/1.mp4"
@@ -10,6 +12,8 @@ class VideoState:
     pos_y = 0
     duration_played = 0
     duration_step = 0
+    clip = None
+    clip_duration = 0
 
     def __init__(self, location, offset, pos_x, pos_y, dim_x, dim_y, duration_step):
         self.location = location
@@ -20,11 +24,15 @@ class VideoState:
         self.dim_y = dim_y
         self.duration_played = offset
         self.duration_step = duration_step
+        self.clip = VideoFileClip(self.location).resize((self.dim_x,self.dim_y)).set_position((self.pos_x, self.pos_y))
+        self.clip_duration = self.clip.duration
 
     def getNextStepClip(self, start_time):
-        clip = VideoFileClip(self.location).resize((self.dim_x,self.dim_y)).set_position((self.pos_x, self.pos_y)) \
-            .subclip(self.duration_played, self.duration_played + self.duration_step).set_start(start_time) \
+        clip = self.clip.subclip(self.duration_played, self.duration_played + self.duration_step).set_start(start_time) \
             .set_end(start_time+self.duration_step)
+        self.duration_played += 2
+        if (self.duration_played + 2 > self.clip_duration):
+            self.duration_played = 0
         return clip
 
 class Props:
@@ -64,7 +72,7 @@ class Props:
         return (self.size_x, self.size_y)
 
 
-props = Props(10, 2, 2, 2, 400, 200)
+props = Props(40, 2, 2, 2, 400, 200)
  
 location1 = "../resources/cars/1.mp4"
 location2 = "../resources/cars/3.mp4"   
@@ -72,22 +80,34 @@ location3 = "../resources/cars/4.mp4"
 location4 = "../resources/cars/2.mov"
 
 (dim_x, dim_y) = props.getVideoSize()
+videos = []
 
 (pos_x, pos_y) = props.allocatePosition()
-video1 = VideoState(location1, 0, pos_x, pos_y, dim_x, dim_y, props.duration_step)
+videos.append(VideoState(location1, 0, pos_x, pos_y, dim_x, dim_y, props.duration_step))
 
 (pos_x, pos_y) = props.allocatePosition()
-video2 = VideoState(location2, 0, pos_x, pos_y, dim_x, dim_y, props.duration_step)
+videos.append(VideoState(location2, 0, pos_x, pos_y, dim_x, dim_y, props.duration_step))
 
 (pos_x, pos_y) = props.allocatePosition()
-video3 = VideoState(location3, 0, pos_x, pos_y, dim_x, dim_y, props.duration_step)
+videos.append(VideoState(location3, 0, pos_x, pos_y, dim_x, dim_y, props.duration_step))
 
 (pos_x, pos_y) = props.allocatePosition()
-video4 = VideoState(location4, 0, pos_x, pos_y, dim_x, dim_y, props.duration_step)
+videos.append(VideoState(location4, 0, pos_x, pos_y, dim_x, dim_y, props.duration_step))
 
-imageclip = ImageClip("../resources/street.jpg").resize((400,200))
+imageclip = ImageClip("../resources/street.jpg").resize((dim_x, dim_y))
 
-video = CompositeVideoClip([imageclip, video1.getNextStepClip(0), video2.getNextStepClip(1), video3.getNextStepClip(4), 
-video4.getNextStepClip(6)])
 
-video.set_duration(10).write_videofile("output.mp4",fps=25,bitrate="500k",audio_codec=None,codec="mpeg4")
+distribution = []
+for i in range(20):
+    distribution.append(random.triangular(0,4))
+
+clips = []
+clips.append(imageclip)
+
+for i in range(20):
+    for j in range(round(distribution[i])):
+        clips.append(videos[j].getNextStepClip(i*2))
+
+video = CompositeVideoClip(clips).set_audio(None).resize((dim_x, dim_y))
+
+video.set_duration(40).write_videofile("output.mp4",fps=25,bitrate="500k",audio_codec=None,codec="mpeg4")
