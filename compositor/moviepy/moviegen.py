@@ -5,6 +5,7 @@ import math
 from xy import XY
 from videostate import VideoState
 from props import Props
+from movieclip import MovieClip
 
 # class Object
 #     obj_type = None
@@ -47,7 +48,8 @@ clips.append(imageclip)
 #     for j in range(round(distribution[i])):
 #         clips.append(videos[j].getNextStepClip(i*2))
 
-clip = videos[0].resizeAndCropVideo()
+movieClip = MovieClip.getNewClipInstance(videos[0])
+clip = movieClip.getClipAt(0)
 clips.append(clip)
 video = CompositeVideoClip(clips).set_audio(None)
 
