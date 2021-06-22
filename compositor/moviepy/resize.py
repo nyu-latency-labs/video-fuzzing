@@ -15,4 +15,4 @@ for dirs in os.listdir(src):
         for files in os.listdir(dirPath):
             filePath = os.path.join(dirPath, files)
             if os.path.isfile(filePath) and files.endswith(("mov", "mp4")):
-                resize(filePath, os.path.join(dirPath, "result", files))
+                resize(filePath, os.path.join(dst, dirs, files))
