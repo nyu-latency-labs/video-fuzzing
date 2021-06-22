@@ -21,4 +21,4 @@ class MovieClip:
 
     @classmethod
     def getNewClipInstance(cls, state: VideoState):
-        return MovieClip(state.original_clip.copy(), state)
+        return MovieClip(state.original_clip, state)
