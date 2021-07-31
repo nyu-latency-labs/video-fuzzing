@@ -1,0 +1,19 @@
+from moviepy.editor import *
+from pathlib import Path
+import sys
+
+DURATION_STEP = 2
+path = sys.argv[1]
+
+video = VideoFileClip(path, audio=False)
+frames = []
+
+Path("output_frames/").mkdir(parents=True, exist_ok=True)
+
+
+for i in range(int(DURATION_STEP/2), int(video.duration), DURATION_STEP):
+    frame = video.get_frame(i)
+    video.save_frame("output_frames/frame_" + str(i) + ".png", t = i)
+
+
+
