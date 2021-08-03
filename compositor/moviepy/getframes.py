@@ -9,7 +9,7 @@ base_name = os.path.basename(path).split(".")[0]
 video = VideoFileClip(path, audio=False)
 frames = []
 
-Path("output_frames/").mkdir(parents=True, exist_ok=True)
+Path(base_name + "_frames").mkdir(parents=True, exist_ok=True)
 
 
 for i in range(int(DURATION_STEP/2), int(video.duration), DURATION_STEP):
