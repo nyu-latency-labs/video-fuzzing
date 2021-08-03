@@ -7,7 +7,9 @@ from props import Props
 def generate_distribution(mean, std, count):
     distribution = []
     for i in range(count):
-        distribution.append(int(random.gauss(mean, std)))
+        k = int(random.gauss(mean, std))
+        k = k if k >= 0 else 0
+        distribution.append(k)
     # print(distribution)
     return distribution
 
