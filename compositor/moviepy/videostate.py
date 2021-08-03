@@ -37,34 +37,31 @@ class VideoState:
     # try distribution of video size as a function of frame size
     def resizeAndCropVideo(self, clip):
         # Decide on video size
-        print("clip size ", str(clip.size))
-        print("frame size ", self.frame_size)
+        # print("clip size ", str(clip.size))
+        # print("frame size ", self.frame_size)
         new_size = XY(random.randrange(min_size.x, min(clip.size[0], self.frame_size.x)), random.randrange(min_size.y, min(clip.size[1], self.frame_size.y)))
-        print("new size ", new_size)
+        # print("new size ", new_size)
 
         # Resize- get ratio btn 2x frame size and newsize
         ratio_max_x = 2*self.frame_size.x/clip.size[0]
         ratio_min_x = new_size.x/clip.size[0]
         ratio_max_y = 2*self.frame_size.y/clip.size[1]
         ratio_min_y = new_size.y/clip.size[1]
-        print(ratio_max_x, ratio_max_y, ratio_min_x, ratio_min_y)
+        # print(ratio_max_x, ratio_max_y, ratio_min_x, ratio_min_y)
 
         ratio_max = ratio_max_x if ratio_max_x < ratio_max_y else ratio_max_y
         ratio_min = ratio_min_x if ratio_min_x > ratio_min_y else ratio_min_y
-        print(ratio_min, ratio_max)
+        # print(ratio_min, ratio_max)
         
         # Resize by aspect ratio only
         resize_ratio = random.randrange(math.ceil(100*ratio_min), math.floor(100*ratio_max))/100
-        print(resize_ratio)
+        # print(resize_ratio)
         final_size = XY(int(clip.size[0]*resize_ratio), int(clip.size[1]*resize_ratio))
         clip = clip.resize(final_size.getXY())
 
         # Crop
-        print(final_size, new_size)
+        # print(final_size, new_size)
         crop_xy = XY(random.randrange(0, final_size.x-new_size.x), random.randrange(0, final_size.y-new_size.y))
         clip = crop(clip, x1=crop_xy.x, x2=crop_xy.x+new_size.x, y1=crop_xy.y, y2=crop_xy.y+new_size.y)
 
         return clip
-
-    
- 

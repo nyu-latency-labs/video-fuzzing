@@ -1,62 +1,34 @@
-# Import everything needed to edit video clips
 from objectrequirement import ObjectRequirement
-import re
 from moviepy.editor import *
 from xy import XY
 from videostate import VideoState
 from props import Props
-from movieclip import MovieClip
-import random
-import datetime
 
-def discoverVideos(root):
-    allVideos = {}
-    objTypes = []
+
+def discover_videos(root):
+    all_videos = {}
+    obj_types = []
     for dirs in os.listdir(root):
         if os.path.isdir(os.path.join(root, dirs)):
-            dirPath = os.path.join(root, dirs)
-            objTypes.append(dirs)
+            dir_path = os.path.join(root, dirs)
+            obj_types.append(dirs)
             paths = []
             vids = []
-            for files in os.listdir(dirPath):
-                filePath = os.path.join(dirPath, files)
-                if os.path.isfile(filePath) and files.endswith(("mov", "mp4")):
-                    paths.append(filePath)
-                    vids.append(VideoState(filePath, 0, props, dirs))
-            allVideos[dirs] = vids
-    return (objTypes, allVideos)
-    
-def generateDistribution(mean, std, count):
-    distribution = []
-    for i in range(count):
-        distribution.append(int(random.gauss(mean, std)))
-    print(distribution)
-    return distribution
+            for files in os.listdir(dir_path):
+                file_path = os.path.join(dir_path, files)
+                if os.path.isfile(file_path) and files.endswith(("mov", "mp4")):
+                    paths.append(file_path)
+                    vids.append(VideoState(file_path, 0, props, dirs))
+            all_videos[dirs] = vids
+    return obj_types, all_videos
 
-def generateClipsForDistribution(vids, distribution):
-    clips = []
-    for i in range(len(distribution)):
-        print(len(vids), distribution[i])
-        val = min(len(vids), distribution[i])
-        sample = random.sample(vids, val)
 
-        for data in sample:
-            movie = MovieClip.getNewClipInstance(data)
-            clip = movie.getClipAt(i*movie.state.duration_step)
-            clips.append(clip)
-    return clips
+def generate_videos_for_requirements(obj_req, vids):
+    all_clips = []
+    for req in obj_req:
+        all_clips.extend(req.generate_clips_from_video(vids))
+    return all_clips
 
-def generateClipsForObjectType(type, allVids, mean, std, count):
-    distribution = generateDistribution(mean, std, count)
-    objVideos = allVids[type]
-    clips = generateClipsForDistribution(objVideos, distribution)
-    return clips
-
-def generateVideosForRequirements(objReq, vids, count):
-    allClips = []
-    for req in objReq:
-        allClips.extend(generateClipsForObjectType(req.type, vids, req.mean, req.std, count))
-    return allClips
 
 FRAME_SIZE = XY(800, 400)
 VIDEO_DURATION = 40
@@ -65,23 +37,37 @@ VIDEO_ROOT = "../resources/result"
 BG_PATH = "../resources/street.jpg"
 
 props = Props(VIDEO_DURATION, VIDEO_STEP_DURATION, FRAME_SIZE)
- 
-imageclip = ImageClip(BG_PATH).resize(FRAME_SIZE.getXY())
 
-clips = []
-clips.append(imageclip)
+image_clip = ImageClip(BG_PATH).resize(FRAME_SIZE.getXY())
 
-(objTypes, allVideos) = discoverVideos(VIDEO_ROOT)
+clips = [image_clip]
+
+(objTypes, allVideos) = discover_videos(VIDEO_ROOT)
 
 # fix distributions
-carReq = ObjectRequirement(2, 1, 'cars')
-humanReq = ObjectRequirement(1, 0, 'humans')
-bikeReq = ObjectRequirement(3, 1, 'bikes')
+carReq = ObjectRequirement(1, 0, 'cars', props)
+humanReq = ObjectRequirement(1, 1, 'humans', props)
+bikeReq = ObjectRequirement(1, 1, 'bikes', props)
 
 req = [carReq, humanReq, bikeReq]
 
-clips.extend(generateVideosForRequirements(req, allVideos, props.getStepCount()))
+total_dist = [0 for i in range(props.step_count)]
 
-video = CompositeVideoClip(clips, use_bgclip=True).set_audio(None)
+for r in req:
+    print(r.distribution)
+    for i in range(len(r.distribution)):
+        total_dist[i] += r.distribution[i]
 
-video.set_duration(props.duration).write_videofile("output.mp4",fps=25,bitrate="1000k",audio_codec=None,codec="mpeg4")
+print(total_dist)
+
+N_TIMES = 3
+
+# Generate multiple videos of the same distribution
+for i in range(N_TIMES):
+    clips.extend(generate_videos_for_requirements(req, allVideos))
+
+    video = CompositeVideoClip(clips, use_bgclip=True).set_audio(None)
+
+    video.set_duration(props.duration).write_videofile("output" + str(i) + ".mp4", fps=25, bitrate="1000k",
+                                                       audio_codec=None,
+                                                       codec="mpeg4")
