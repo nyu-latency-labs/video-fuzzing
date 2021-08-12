@@ -1,4 +1,5 @@
 from moviepy.editor import *
+from pathlib import Path
 import sys
 
 src = sys.argv[1]
@@ -15,4 +16,5 @@ for dirs in os.listdir(src):
         for files in os.listdir(dirPath):
             filePath = os.path.join(dirPath, files)
             if os.path.isfile(filePath) and files.endswith(("mov", "mp4")):
+                Path(os.path.join(dst, dirs)).mkdir(parents=True, exist_ok=True)
                 resize(filePath, os.path.join(dst, dirs, files))
