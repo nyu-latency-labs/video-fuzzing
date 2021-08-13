@@ -45,9 +45,9 @@ clips = [image_clip]
 (objTypes, allVideos) = discover_videos(VIDEO_ROOT)
 
 # fix distributions
-carReq = ObjectRequirement(1, 0, 'cars', props)
-humanReq = ObjectRequirement(1, 1, 'humans', props)
-bikeReq = ObjectRequirement(1, 1, 'bikes', props)
+carReq = ObjectRequirement(2, 1, 'car', props)
+humanReq = ObjectRequirement(1, 1, 'person', props)
+bikeReq = ObjectRequirement(1, 1, 'motorcycle', props)
 
 req = [carReq, humanReq, bikeReq]
 
