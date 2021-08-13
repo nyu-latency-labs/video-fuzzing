@@ -61,7 +61,10 @@ class VideoState:
 
         # Crop
         # print(final_size, new_size)
-        crop_xy = XY(random.randrange(0, final_size.x-new_size.x), random.randrange(0, final_size.y-new_size.y))
+        pos_x = 0 if final_size.x == new_size.x else random.randrange(0, final_size.x-new_size.x)
+        pos_y = 0 if final_size.y == new_size.y else random.randrange(0, final_size.y-new_size.y)
+
+        crop_xy = XY(pos_x, pos_y)
         clip = crop(clip, x1=crop_xy.x, x2=crop_xy.x+new_size.x, y1=crop_xy.y, y2=crop_xy.y+new_size.y)
 
         return clip
