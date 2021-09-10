@@ -47,6 +47,13 @@ Recall: 0.0
 | --- | --- | 
 |![video0](result_res/rocket_onnxyolo_video0_with_frame1.png "video0") | ![video0](result_res/rocket_onnxyolo_video0_without_frame1.png "video0") |
 
+Total expected detections: 1000  
+Total actual detections: 999  
+Total hits: 999  
+Total misses: 0  
+Precision: 100.0  
+Recall: 99.9
+
 ### video1
 #### Object Distribution:  
 ![Object Distribution](result_res/video1.png "video1")
@@ -80,6 +87,13 @@ Recall: 6.4
 | With Frame 1 | Without Frame 1 |
 | --- | --- | 
 |![video1](result_res/rocket_onnxyolo_video1_with_frame1.png "video1") | ![video1](result_res/rocket_onnxyolo_video1_without_frame1.png "video1") |
+
+Total expected detections: 1000  
+Total actual detections: 126  
+Total hits: 116  
+Total misses: 883  
+Precision: 92.06349206349206  
+Recall: 11.6
 
 ### video2
 #### Object Distribution:  
@@ -115,6 +129,13 @@ Recall: 0.0
 | --- | --- | 
 |![video2](result_res/rocket_onnxyolo_video2_with_frame1.png "video2") | ![video2](result_res/rocket_onnxyolo_video2_without_frame1.png "video2") |
 
+Total expected detections: 300  
+Total actual detections: 50  
+Total hits: 50  
+Total misses: 249  
+Precision: 100.0  
+Recall: 16.666666666666668
+
 ### video3
 #### Object Distribution:  
 ![Object Distribution](result_res/video3.png "video3")
@@ -148,3 +169,10 @@ Recall: 11.224489795918368
 | With Frame 1 | Without Frame 1 |
 | --- | --- | 
 |![video3](result_res/rocket_onnxyolo_video3_with_frame1.png "video3") | ![video3](result_res/rocket_onnxyolo_video3_without_frame1.png "video3") |
+
+Total expected detections: 2450  
+Total actual detections: 1155  
+Total hits: 557  
+Total misses: 1891  
+Precision: 48.22510822510822  
+Recall: 22.73469387755102
