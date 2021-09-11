@@ -16,10 +16,10 @@ BG_PATH = "../resources/street.jpg"
 props = Props(VIDEO_DURATION, VIDEO_STEP_DURATION, FRAME_SIZE, VIDEO_FPS)
 
 video = VideoFileClip(path, audio=False)
-frame = video.get_frame(sys.argv[2])
+frame = video.get_frame(int(sys.argv[2]))
 
-clip = ImageSequenceClip([frame], fps=props.fps)
+clip = ImageSequenceClip([frame], fps=props.fps).resize(FRAME_SIZE.get_xy())
 
 clip.set_duration(props.duration).write_videofile("singleframe.mp4", fps=props.fps, bitrate="1000k",
-                                                   audio_codec=None,
-                                                   codec="mpeg4")
+                                                  audio_codec=None,
+                                                  codec="mpeg4")

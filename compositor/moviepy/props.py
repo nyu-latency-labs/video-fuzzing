@@ -1,5 +1,6 @@
 from xy import XY
 
+
 class Props:
     duration = 10
     duration_step = 2
@@ -11,11 +12,11 @@ class Props:
         self.duration = duration
         self.duration_step = duration_step
         self.dim = dim
-        self.step_count = int(duration/duration_step)
+        self.step_count = int(duration / duration_step)
         self.fps = fps
 
-    def getVideoSize(self):
-        return XY(self.size.x, self.size.y)
+    def get_video_size(self):
+        return XY(self.dim.x, self.dim.y)
 
-    def getStepCount(self):
+    def get_step_count(self):
         return self.step_count

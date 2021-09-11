@@ -21,8 +21,8 @@ def generate_clips_for_distribution(videos, distribution):
         sample = random.sample(videos, val)
 
         for data in sample:
-            movie = MovieClip.getNewClipInstance(data)
-            clip = movie.getClipAt(i * movie.state.duration_step)
+            movie = MovieClip.get_new_clip_instance(data)
+            clip = movie.get_clip_at(i * movie.state.duration_step)
             video_clips.append(clip)
     return video_clips
 
@@ -40,7 +40,7 @@ class ObjectRequirement:
         self.type = obj_type
         self.props = props
         if dist is None:
-            self.distribution = generate_distribution(mean, std, props.getStepCount())
+            self.distribution = generate_distribution(mean, std, props.get_step_count())
         else:
             self.distribution = dist
 

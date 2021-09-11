@@ -15,20 +15,20 @@ def discover_videos(root):
             dir_path = os.path.join(root, dirs)
             obj_types.append(dirs)
             paths = []
-            vids = []
+            videos = []
             for files in os.listdir(dir_path):
                 file_path = os.path.join(dir_path, files)
                 if os.path.isfile(file_path) and files.endswith(("mov", "mp4")):
                     paths.append(file_path)
-                    vids.append(VideoState(file_path, 0, props, dirs))
-            all_videos[dirs] = vids
+                    videos.append(VideoState(file_path, 0, props, dirs))
+            all_videos[dirs] = videos
     return obj_types, all_videos
 
 
-def generate_videos_for_requirements(obj_req, vids):
+def generate_videos_for_requirements(obj_req, videos):
     all_clips = []
-    for req in obj_req:
-        all_clips.extend(req.generate_clips_from_video(vids))
+    for requirement in obj_req:
+        all_clips.extend(requirement.generate_clips_from_video(videos))
     return all_clips
 
 
@@ -43,7 +43,7 @@ N_TIMES = 1
 output_name = sys.argv[1]
 props = Props(VIDEO_DURATION, VIDEO_STEP_DURATION, FRAME_SIZE, VIDEO_FPS)
 
-image_clip = ImageClip(BG_PATH).resize(FRAME_SIZE.getXY())
+image_clip = ImageClip(BG_PATH).resize(FRAME_SIZE.get_xy())
 
 clips = [image_clip]
 
@@ -66,14 +66,14 @@ for r in req:
             total_dist[i * props.fps + j] += r.distribution[i]
 
 
-def get_objects_frame_level(props, requirements):
+def get_objects_frame_level(prop, requirements):
     total_dist_val = []
-    for i in range(props.step_count):
+    for i in range(prop.step_count):
         tmp = []
-        for req in requirements:
-            if req.distribution[i] > 0:
-                tmp.append(req.type)
-        for j in range(props.fps * props.duration_step):
+        for requirement in requirements:
+            if requirement.distribution[i] > 0:
+                tmp.append(requirement.type)
+        for j in range(prop.fps * prop.duration_step):
             total_dist_val.append(tmp)
 
     return total_dist_val

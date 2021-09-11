@@ -11,10 +11,6 @@ frames = []
 
 Path(base_name + "_frames").mkdir(parents=True, exist_ok=True)
 
-
-for i in range(int(DURATION_STEP/2), int(video.duration), DURATION_STEP):
+for i in range(int(DURATION_STEP / 2), int(video.duration), DURATION_STEP):
     frame = video.get_frame(i)
-    video.save_frame(base_name + "_frames/frame_" + str(i) + ".png", t = i)
-
-
-
+    video.save_frame(base_name + "_frames/frame_" + str(i) + ".png", t=i)
