@@ -19,6 +19,7 @@ result = []
 
 for line in data['object_detection']:
     result_data = []
+    line = list(set(line))
     for val in line:
         if int(val) < 91:
             result_data.append(dictionary[int(val)-1])
