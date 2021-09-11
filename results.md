@@ -30,7 +30,7 @@ Total misses: 0
 Precision: 33.545790003354576  
 Recall: 100.0
 
-#### Rocket framednntf: 
+#### Rocket framednntf:
 | With Frame 1 | Without Frame 1 |
 | --- | --- | 
 |![video0](result_res/rocket_framednntf_video0_with_frame1.png "video0") | ![video0](result_res/rocket_framednntf_video0_without_frame1.png "video0") |
