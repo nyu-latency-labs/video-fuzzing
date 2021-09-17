@@ -3,24 +3,11 @@ import sys
 import re
 import json
 
-CHARS_TO_REMOVE = "[\[\]'\"]"
 expected = open(sys.argv[1], 'r')
 actual = open(sys.argv[2], 'r')
 
 expected_lines = json.load(expected)
 actual_lines = json.load(actual)
-
-
-def create_list(lines: string):
-    result = []
-    for line in lines:
-        data1 = line.split("], ")
-        for value in data1:
-            arr = re.sub(CHARS_TO_REMOVE, "", value).split(", ")
-            arr = list(filter(None, arr))
-            result.append(arr)
-
-    return result
 
 
 expected_data = expected_lines['object_distribution']
@@ -43,12 +30,12 @@ for obj in expected_data:
     total_objects += len(obj)
 
 for obj in actual_data:
-    total_objects_det += len(obj)
+    total_objects_det += len(list(set(obj)))
 
 for v1, v2 in zip(expected_data, actual_data):
     miss = []
     hit = []
-    for d1 in v1:
+    for d1 in list(set(v1)):
         if d1 not in v2:
             miss.append(d1)
             misses += 1

@@ -35,12 +35,12 @@ Recall: 100.0
 | --- | --- | 
 |![video0](result_res/rocket_maskrcnn_video0_with_frame1.png "video0") | ![video0](result_res/rocket_maskrcnn_video0_without_frame1.png "video0") |
 
-Total expected detections: 1000  
-Total actual detections: 2981  
-Total hits: 1000  
-Total misses: 0  
-Precision: 33.545790003354576  
-Recall: 100.0
+Total expected detections: 1000
+Total actual detections: 999
+Total hits: 999
+Total misses: 0
+Precision: 100.0
+Recall: 99.9
 
 #### Rocket framednntf:
 | With Frame 1 | Without Frame 1 |
@@ -88,12 +88,12 @@ Recall: 20.8
 | --- | --- | 
 |![video1](result_res/rocket_maskrcnn_video1_with_frame1.png "video1") | ![video1](result_res/rocket_maskrcnn_video1_without_frame1.png "video1") |
 
-Total expected detections: 1000  
-Total actual detections: 2081  
-Total hits: 208  
-Total misses: 792  
-Precision: 9.995194617972128  
-Recall: 20.8
+Total expected detections: 1000
+Total actual detections: 969
+Total hits: 969
+Total misses: 30
+Precision: 100.0
+Recall: 96.9
 
 #### Rocket framednntf: 
 | With Frame 1 | Without Frame 1 |
@@ -141,12 +141,12 @@ Recall: 22.666666666666668
 | --- | --- | 
 |![video2](result_res/rocket_maskrcnn_video2_with_frame1.png "video2") | ![video2](result_res/rocket_maskrcnn_video2_without_frame1.png "video2") |
 
-Total expected detections: 300  
-Total actual detections: 1136  
-Total hits: 68  
-Total misses: 232  
-Precision: 5.985915492957746  
-Recall: 22.666666666666668
+Total expected detections: 300
+Total actual detections: 993
+Total hits: 293
+Total misses: 6
+Precision: 29.506545820745217
+Recall: 97.66666666666667
 
 #### Rocket framednntf: 
 | With Frame 1 | Without Frame 1 |
@@ -194,12 +194,12 @@ Recall: 49.265306122448976
 | --- | --- | 
 |![video3](result_res/rocket_maskrcnn_video3_with_frame1.png "video3") | ![video3](result_res/rocket_maskrcnn_video3_without_frame1.png "video3") |
 
-Total expected detections: 2450  
-Total actual detections: 6450  
-Total hits: 1207  
-Total misses: 1243  
-Precision: 18.713178294573645  
-Recall: 49.265306122448976
+Total expected detections: 2450
+Total actual detections: 1042
+Total hits: 922
+Total misses: 1526
+Precision: 88.48368522072937
+Recall: 37.63265306122449
 
 #### Rocket framednntf: 
 | With Frame 1 | Without Frame 1 |
