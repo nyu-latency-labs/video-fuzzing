@@ -30,6 +30,18 @@ Total misses: 0
 Precision: 33.545790003354576  
 Recall: 100.0
 
+#### Rocket maskrcnn: 
+| With Frame 1 | Without Frame 1 |
+| --- | --- | 
+|![video0](result_res/rocket_maskrcnn_video0_with_frame1.png "video0") | ![video0](result_res/rocket_maskrcnn_video0_without_frame1.png "video0") |
+
+Total expected detections: 1000  
+Total actual detections: 2981  
+Total hits: 1000  
+Total misses: 0  
+Precision: 33.545790003354576  
+Recall: 100.0
+
 #### Rocket framednntf:
 | With Frame 1 | Without Frame 1 |
 | --- | --- | 
@@ -63,6 +75,18 @@ Recall: 99.9
 | With Frame 1 | Without Frame 1 |
 | --- | --- | 
 |![video1](result_res/argus_maskrcnn_video1_with_frame1.png "video1") | ![video1](result_res/argus_maskrcnn_video1_without_frame1.png "video1") |
+
+Total expected detections: 1000  
+Total actual detections: 2081  
+Total hits: 208  
+Total misses: 792  
+Precision: 9.995194617972128  
+Recall: 20.8
+
+#### Rocket maskrcnn: 
+| With Frame 1 | Without Frame 1 |
+| --- | --- | 
+|![video1](result_res/rocket_maskrcnn_video1_with_frame1.png "video1") | ![video1](result_res/rocket_maskrcnn_video1_without_frame1.png "video1") |
 
 Total expected detections: 1000  
 Total actual detections: 2081  
@@ -112,6 +136,18 @@ Total misses: 232
 Precision: 5.985915492957746  
 Recall: 22.666666666666668
 
+#### Rocket maskrcnn: 
+| With Frame 1 | Without Frame 1 |
+| --- | --- | 
+|![video2](result_res/rocket_maskrcnn_video2_with_frame1.png "video2") | ![video2](result_res/rocket_maskrcnn_video2_without_frame1.png "video2") |
+
+Total expected detections: 300  
+Total actual detections: 1136  
+Total hits: 68  
+Total misses: 232  
+Precision: 5.985915492957746  
+Recall: 22.666666666666668
+
 #### Rocket framednntf: 
 | With Frame 1 | Without Frame 1 |
 | --- | --- | 
@@ -132,7 +168,7 @@ Recall: 0.0
 Total expected detections: 300  
 Total actual detections: 50  
 Total hits: 50  
-Total misses: 249  
+Total misses: 249   
 Precision: 100.0  
 Recall: 16.666666666666668
 
@@ -145,6 +181,18 @@ Recall: 16.666666666666668
 | With Frame 1 | Without Frame 1 |
 | --- | --- | 
 |![video3](result_res/argus_maskrcnn_video3_with_frame1.png "video3") | ![video3](result_res/argus_maskrcnn_video3_without_frame1.png "video3") |
+
+Total expected detections: 2450  
+Total actual detections: 6450  
+Total hits: 1207  
+Total misses: 1243  
+Precision: 18.713178294573645  
+Recall: 49.265306122448976
+
+#### Rocket maskrcnn: 
+| With Frame 1 | Without Frame 1 |
+| --- | --- | 
+|![video3](result_res/rocket_maskrcnn_video3_with_frame1.png "video3") | ![video3](result_res/rocket_maskrcnn_video3_without_frame1.png "video3") |
 
 Total expected detections: 2450  
 Total actual detections: 6450  
