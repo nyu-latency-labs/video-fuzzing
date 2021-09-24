@@ -1,3 +1,6 @@
+import math
+import random
+
 from objectrequirement import ObjectRequirement
 from moviepy.editor import *
 from xy import XY
@@ -7,22 +10,22 @@ import json
 import sys
 
 
-def discover_videos(root):
-    all_videos = {}
+def discover_media(root):
+    all_media = {}
     obj_types = []
     for dirs in os.listdir(root):
         if os.path.isdir(os.path.join(root, dirs)):
             dir_path = os.path.join(root, dirs)
             obj_types.append(dirs)
             paths = []
-            videos = []
+            media = []
             for files in os.listdir(dir_path):
                 file_path = os.path.join(dir_path, files)
-                if os.path.isfile(file_path) and files.endswith(("mov", "mp4")):
+                if os.path.isfile(file_path) and files.endswith(("jpg")):
                     paths.append(file_path)
-                    videos.append(VideoState(file_path, 0, props, dirs))
-            all_videos[dirs] = videos
-    return obj_types, all_videos
+                    media.append(VideoState(file_path, 0, props, dirs))
+            all_media[dirs] = media
+    return obj_types, all_media
 
 
 def generate_videos_for_requirements(obj_req, videos):
@@ -32,11 +35,11 @@ def generate_videos_for_requirements(obj_req, videos):
     return all_clips
 
 
-FRAME_SIZE = XY(800, 400)
+FRAME_SIZE = XY(416, 416)
 VIDEO_DURATION = 40
 VIDEO_STEP_DURATION = 2
 VIDEO_FPS = 25
-VIDEO_ROOT = "../resources/result"
+VIDEO_ROOT = "../resources"
 BG_PATH = "../resources/street.jpg"
 N_TIMES = 1
 
@@ -47,12 +50,13 @@ image_clip = ImageClip(BG_PATH).resize(FRAME_SIZE.get_xy())
 
 clips = [image_clip]
 
-(objTypes, allVideos) = discover_videos(VIDEO_ROOT)
+(objTypes, all_media) = discover_media(VIDEO_ROOT)
+# print(objTypes)
 
 # fix distributions
-carReq = ObjectRequirement(1, 0, 'car', props)
-humanReq = ObjectRequirement(1, 1, 'person', props)
-bikeReq = ObjectRequirement(1, 1, 'motorcycle', props)
+carReq = ObjectRequirement(2, 1, 'car', props)
+humanReq = ObjectRequirement(2, 1, 'person', props)
+bikeReq = ObjectRequirement(2, 1, 'motorcycle', props)
 
 req = [carReq, humanReq, bikeReq]
 # req = [carReq]
@@ -65,6 +69,24 @@ for r in req:
         for j in range(props.fps):
             total_dist[i * props.fps + j] += r.distribution[i]
 
+max_object_num = max(total_dist)
+
+# hard code to  3x3 matrix
+for i in range(props.step_count):
+    num_obj = 0
+    for obj_r in req:
+        if num_obj == 9:
+            break
+
+        k = obj_r.distribution[i]
+        val = min(len(all_media[obj_r.type]), k)
+        sample = random.sample(all_media[obj_r.type], val)
+        for j in sample:
+            klip = j.generate_clip(num_obj, 3, 3)
+            _klip = j.get_next_step_clip(i*props.duration_step, klip)
+            clips.append(_klip)
+            num_obj += 1
+
 
 def get_objects_frame_level(prop, requirements):
     total_dist_val = []
@@ -73,7 +95,7 @@ def get_objects_frame_level(prop, requirements):
         for requirement in requirements:
             if requirement.distribution[i] > 0:
                 tmp.append(requirement.type)
-        for j in range(prop.fps * prop.duration_step):
+        for e in range(prop.fps * prop.duration_step):
             total_dist_val.append(tmp)
 
     return total_dist_val
@@ -81,7 +103,7 @@ def get_objects_frame_level(prop, requirements):
 
 # Generate multiple videos of the same distribution
 for i in range(N_TIMES):
-    clips.extend(generate_videos_for_requirements(req, allVideos))
+#     clips.extend(generate_videos_for_requirements(req, all_media))
 
     video = CompositeVideoClip(clips, use_bgclip=True).set_audio(None)
 
