@@ -1,0 +1,39 @@
+{
+    "fps": 25,
+    "duration": 40,
+    "allow_overlap": false,
+    "step_size": 2,
+    "media_root": "./resources",
+    "background_path": "../resources/street.jpg",
+    "dimension": {
+        "x": 400, "y": 400
+    },
+    "transformers": [
+        {
+            "type": "rotate_transformer",
+            "angle": 45
+        }
+    ],
+    "fuzzer": {
+        "type": "experiment_fuzzer",
+        "transformers": [
+            {
+                "type": "rotate_transformer",
+                "angle": 45
+            }
+        ]
+    },
+    "compositor": {
+        "type": "grid_compositor"
+    },
+    "object_class": ["car", "person", "motorcycle"],
+    "object_distribution": {
+        "type": "normal",
+        "mean": 5,
+        "std": 3
+    },
+    "time_distribution": {
+        "type": "linear",
+        "value": 6
+    }
+}
