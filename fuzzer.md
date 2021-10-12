@@ -97,7 +97,7 @@ fps, overlap, distribution, obj_class etc are global. a fuzzer is created which 
 - this allows global and local props.
 - fuzzer could also be an array allowing multiple sets of videos to be generated.
 
-13. Result
+14. Result
 - Provide video, distribution of obj+type, bbox of object
 
 

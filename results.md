@@ -8,6 +8,7 @@ The benchmark_videos folder contains a set of videos of different types used to 
 | video1 | Composited video with normal distribution of car (μ=1, σ=0) | 40 | 25 |
 | video2 | Composited video with normal distribution of car (μ=1, σ=1) | 40 | 25 |
 | video3 | Composited video with normal distribution of car (μ=1, σ=0), person (μ=1, σ=1), motorbike (μ=1, σ=1) | 40 | 25 |
+| video4 | Composited video with normal distribution of car (μ=2, σ=1), person (μ=2, σ=1), motorbike (μ=2, σ=1) | 40 | 25 |
 
 The result_res folder contains the raw detection data for each benchmarking run as a json so that data is available for future analysis.
 
