@@ -1,6 +1,8 @@
 import json
 from random import gauss
 
+from Config.XY import XY
+
 
 def process_distribution(ds):
     ds_type = ds["type"]
@@ -29,3 +31,4 @@ class Config:
         self.step_size = int(self.data["step_size"])
         self.steps = self.duration / self.step_size
         self.media_root = self.data["media_root"]
+        self.frame_size = XY(self.data["dimension"]["x"], self.data["dimension"]["y"])
