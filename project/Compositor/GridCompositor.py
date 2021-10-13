@@ -2,6 +2,7 @@ import logging
 
 from moviepy.video.VideoClip import ImageClip
 from moviepy.video.compositing.CompositeVideoClip import CompositeVideoClip
+from moviepy.video.fx.resize import resize
 from moviepy.video.fx.crop import crop
 from moviepy.editor import VideoClip
 
@@ -69,7 +70,7 @@ class GridCompositor(Compositor):
 
     def apply(self, clips):
         if clips is None:
-            return ImageClip(self.config.data["background_path"])
+            return ImageClip(self.config.data["background_path"]).resize(self.config.frame_size.get_xy())
 
         # Create grid and put videos into positions
 
@@ -78,8 +79,7 @@ class GridCompositor(Compositor):
         sqrt = get_closest_square(max_vids)
         self.grid = XY(sqrt, sqrt)
 
-        bg_video = ImageClip(self.config.data["background_path"])
-        self.frame_dimension = XY(bg_video.w, bg_video.h)
+        bg_video = ImageClip(self.config.data["background_path"]).resize(self.config.frame_size.get_xy())
 
         self.grid_state = [[0 for i in range(self.grid.x)] for j in range(self.grid.y)]
 
@@ -87,7 +87,7 @@ class GridCompositor(Compositor):
         positioned_clips = self.position_clips(clips)
 
         # Based on video overlap flag, crop/resize the videos to increase throughput
-        block_size = XY(self.frame_dimension.x / self.grid.x, self.frame_dimension.y / self.grid.y)
+        block_size = XY(self.config.frame_size.x / self.grid.x, self.config.frame_size.y / self.grid.y)
         if self.config.data["allow_overlap"]:
             for clip in positioned_clips:
                 final_clips.append(self.crop_clips(clip, block_size))
@@ -106,8 +106,8 @@ class GridCompositor(Compositor):
     def resize_clip(self, clip: VideoClip, size: XY):
         x, y = clip.size
         if x > y:
-            return clip.resize(height=size.y)
-        return clip.resize(width=size.x)
+            return resize(clip, height=size.y)
+        return resize(clip, width=size.x)
 
     def position_clips(self, clips):
         simulator = EventSimulator()
@@ -120,7 +120,7 @@ class GridCompositor(Compositor):
         end_simulation_event = Event(EventType.END_SIMULATION, self.config.duration)
         simulator.add_event(end_simulation_event)
 
-        block_size = XY(self.frame_dimension.x / self.grid.x, self.frame_dimension.y / self.grid.y)
+        block_size = XY(self.config.frame_size.x / self.grid.x, self.config.frame_size.y / self.grid.y)
 
         while simulator.has_event():
             curr_event = simulator.get_event()
