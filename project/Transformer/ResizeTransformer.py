@@ -21,8 +21,8 @@ class ResizeTransformer(Transformer):
     dimensions = None
     type = None
 
-    def __init__(self, config: Config, dim: XY = None, ratio=None, width=None, height=None):
-        super().__init__(config)
+    def __init__(self,  dim: XY = None, ratio=None, width=None, height=None):
+        super().__init__()
         self.name = "resize_transformer"
 
         if dim is not None:
@@ -59,7 +59,7 @@ class ResizeTransformer(Transformer):
         return new_data
 
     @classmethod
-    def create_from_config(cls, config: Config, data):
+    def create_from_config(cls, data):
         dim = None
         ratio = None
         width = None
@@ -74,4 +74,4 @@ class ResizeTransformer(Transformer):
         elif "height" in data:
             height = data["height"]
 
-        return ResizeTransformer(config, dim, ratio, width, height)
+        return ResizeTransformer(dim, ratio, width, height)
