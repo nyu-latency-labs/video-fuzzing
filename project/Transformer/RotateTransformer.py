@@ -12,7 +12,7 @@ class RotateTransformer(Transformer):
         self.angle = angle
 
     def apply(self, clip) -> VideoClip:
-        return clip.rotate(self.angle)
+        return clip.add_mask().rotate(self.angle)
 
     @classmethod
     def create_from_config(cls, data):

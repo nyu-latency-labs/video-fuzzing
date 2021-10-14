@@ -19,6 +19,12 @@ class EventSimulator:
     def has_event(self):
         return len(self.events) > 0
 
+    def has_video_event(self):
+        for e in self.events:
+            if e.event_type is EventType.VIDEO_END:
+                return True
+        return False
+
     def get_event(self) -> Event:
         if len(self.events) > 0:
             current_event = self.events.pop(0)

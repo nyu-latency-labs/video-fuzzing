@@ -61,6 +61,8 @@ class PreProcessor(PipelineUnit):
         while current_event is not None:
 
             if current_event.event_type is EventType.END_SIMULATION:
+                while simulator.has_video_event():
+                    self.remove_video(current_event, simulator)
                 break
 
             if current_event.event_type is EventType.INTERVAL:

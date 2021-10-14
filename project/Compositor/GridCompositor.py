@@ -34,7 +34,7 @@ def calculate_max_videos(clips):
     start.sort()
     end.sort()
 
-    i = 1
+    i = 0
     j = 0
 
     while i < len(clips):

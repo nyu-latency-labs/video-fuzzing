@@ -47,17 +47,12 @@ class Pipeline:
             for i in range(output["num_videos"]):
                 logging.info("In PreProcessor step")
                 preprocessor_result = preprocessor.apply(output)
-                # preprocessor_result_final = list()
-                # for result in preprocessor_result:
-                #     preprocessor_result_final.append(result)
                 logging.info("PreProcessor step done")
 
                 local_transformers = global_transformers.copy()
                 local_transformers.append(output["transformers"])
 
                 logging.info("In Transformer pipeline step")
-                # Transform all videos
-                # transformer_result_tmp = [None] * len(preprocessor_result)
                 transformer_processes = []
                 transformer_result = []
                 with multiprocessing.Manager() as manager:
@@ -69,11 +64,6 @@ class Pipeline:
                         transformer_processes.append(process)
                         process.start()
 
-                    # for transformer in local_transformers:
-                    #     logging.debug("Making transformations on the video. Please be patient.")
-                    #     video = transformer.apply(video)
-                    # transformer_result.append(video)
-
                     for process in transformer_processes:
                         process.join()
 
@@ -81,7 +71,6 @@ class Pipeline:
                         transformer_result.append(res.get_video())
 
                 logging.info("Transformer pipeline step done")
-
 
                 logging.info("In Compositor step")
                 compositor_result = compositor.apply(transformer_result)

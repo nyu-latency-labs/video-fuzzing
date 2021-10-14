@@ -18,8 +18,8 @@
         "type": "experiment_fuzzer",
         "transformers": [
             {
-                "type": "resize_transformer",
-                "ratio": 1
+                "type": "rotate_transformer",
+                "angle": 45
             }
         ]
     },

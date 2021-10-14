@@ -18,6 +18,7 @@ class ExperimentFuzzer(Fuzzer):
                                                     ceil(self.config.duration/self.config.step_size))
 
         # Generate a large enough distribution
+        # TODO reduce the size of pass lambda
         num_distributions = int(self.config.duration * sum(object_distribution))
         logging.info("Generating distributions of size %s", num_distributions)
 
