@@ -1,3 +1,4 @@
+from math import ceil
 from random import choices
 import logging
 from moviepy.video.VideoClip import VideoClip
@@ -32,7 +33,8 @@ class PreProcessor(PipelineUnit):
 
         object_distribution = data["object_distribution"]
         if object_distribution is None:
-            object_distribution = generate_distribution(self.config.object_distribution_fn, self.config.step_size)
+            object_distribution = generate_distribution(self.config.object_distribution_fn,
+                                                        ceil(self.config.duration/self.config.step_size))
 
         time_distribution = data["time_distribution"]
         if time_distribution is None:
@@ -68,7 +70,7 @@ class PreProcessor(PipelineUnit):
                     self.add_new_video(current_event, final_clips, object_types, simulator, time_distribution)
 
                 while object_distribution[current_event.data] < simulator.get_video_events_in_progress():
-                    self.remove_video(current_event, final_clips, simulator)
+                    self.remove_video(current_event, simulator)
 
             if current_event.event_type is EventType.VIDEO_END:
                 self.add_new_video(current_event, final_clips, object_types, simulator, time_distribution)
@@ -77,13 +79,11 @@ class PreProcessor(PipelineUnit):
 
         return final_clips
 
-    def remove_video(self, current_event, final_clips, simulator):
+    def remove_video(self, current_event, simulator):
         event = simulator.get_video_event()
-        final_clips.remove(event.clip)
-        new_clip = event.clip.set_end(current_event.time)
-        final_clips.append(new_clip)
+        event.clip.set_end(current_event.time)
         logging.debug("Modified video with start time: %s and set end time to %s",
-                      new_clip.start, new_clip.end)
+                      event.clip.start, event.clip.end)
 
     def add_new_video(self, current_event, final_clips, object_types, simulator, time_distribution):
         video = self.get_video(object_types.pop(0), time_distribution.pop(0), current_event.time)

@@ -69,7 +69,9 @@ class GridCompositor(Compositor):
         super().__init__(config)
 
     def apply(self, clips):
-        if clips is None:
+        logging.debug("Positioned %s clips", len(clips))
+
+        if clips is None or clips is []:
             return ImageClip(self.config.data["background_path"]).resize(self.config.frame_size.get_xy())
 
         # Create grid and put videos into positions
@@ -79,12 +81,14 @@ class GridCompositor(Compositor):
         sqrt = get_closest_square(max_vids)
         self.grid = XY(sqrt, sqrt)
 
-        bg_video = ImageClip(self.config.data["background_path"]).resize(self.config.frame_size.get_xy())
+        bg_video = ImageClip(self.config.data["background_path"])
+        bg_video = resize(bg_video, self.config.frame_size.get_xy()).set_duration(self.config.duration)
 
         self.grid_state = [[0 for i in range(self.grid.x)] for j in range(self.grid.y)]
 
         final_clips = [bg_video]
         positioned_clips = self.position_clips(clips)
+        logging.debug("Positioned %s clips", len(positioned_clips))
 
         # Based on video overlap flag, crop/resize the videos to increase throughput
         block_size = XY(self.config.frame_size.x / self.grid.x, self.config.frame_size.y / self.grid.y)

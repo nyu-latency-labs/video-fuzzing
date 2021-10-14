@@ -1,5 +1,6 @@
 import logging
-import sys
+import multiprocessing
+import uuid
 
 from Compositor.Compositor import Compositor
 from Compositor.GridCompositor import GridCompositor
@@ -11,6 +12,17 @@ from Processor.PreProcessor import PreProcessor
 from Transformer.ResizeTransformer import ResizeTransformer
 from Transformer.RotateTransformer import RotateTransformer
 from Transformer.Transformer import Transformer
+
+
+def transformer_task(video, tx_list, out_list):
+    clip = video.get_video()
+    for tx in tx_list:
+        clip = tx.apply(clip)
+    tmp_name = "tmp/" + str(uuid.uuid4()) + ".mp4"
+    clip.write_videofile(tmp_name, 25, "mpeg4", audio=False, bitrate="1000k")
+    video.filepath = tmp_name
+    out_list.append(video)
+    logging.debug("Updated video references")
 
 
 class Pipeline:
@@ -35,6 +47,9 @@ class Pipeline:
             for i in range(output["num_videos"]):
                 logging.info("In PreProcessor step")
                 preprocessor_result = preprocessor.apply(output)
+                # preprocessor_result_final = list()
+                # for result in preprocessor_result:
+                #     preprocessor_result_final.append(result)
                 logging.info("PreProcessor step done")
 
                 local_transformers = global_transformers.copy()
@@ -42,13 +57,31 @@ class Pipeline:
 
                 logging.info("In Transformer pipeline step")
                 # Transform all videos
+                # transformer_result_tmp = [None] * len(preprocessor_result)
+                transformer_processes = []
                 transformer_result = []
-                for video in preprocessor_result:
-                    for transformer in local_transformers:
-                        logging.debug("Making transformations on the video. Please be patient.")
-                        video = transformer.apply(video)
-                    transformer_result.append(video)
+                with multiprocessing.Manager() as manager:
+                    transformer_result_tmp = manager.list()
+                    for idx in range(len(preprocessor_result)):
+                        video = preprocessor_result[idx]
+                        process = multiprocessing.Process(target=transformer_task,
+                                                          args=(video, local_transformers, transformer_result_tmp))
+                        transformer_processes.append(process)
+                        process.start()
+
+                    # for transformer in local_transformers:
+                    #     logging.debug("Making transformations on the video. Please be patient.")
+                    #     video = transformer.apply(video)
+                    # transformer_result.append(video)
+
+                    for process in transformer_processes:
+                        process.join()
+
+                    for res in transformer_result_tmp:
+                        transformer_result.append(res.get_video())
+
                 logging.info("Transformer pipeline step done")
+
 
                 logging.info("In Compositor step")
                 compositor_result = compositor.apply(transformer_result)
@@ -70,11 +103,11 @@ class Pipeline:
             tx_type = element["type"]
 
             if tx_type == "rotate_transformer":
-                transformers.append(RotateTransformer.create_from_config(self.config, element))
+                transformers.append(RotateTransformer.create_from_config(element))
             elif tx_type == "resize_transformer":
-                transformers.append(ResizeTransformer.create_from_config(self.config, element))
+                transformers.append(ResizeTransformer.create_from_config(element))
             else:
-                transformers.append(Transformer.create_from_config(self.config, element))
+                transformers.append(Transformer.create_from_config(element))
 
         return transformers
 

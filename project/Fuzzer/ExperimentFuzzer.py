@@ -1,4 +1,5 @@
 import logging
+from math import ceil
 from random import choices
 
 from Config.Config import Config
@@ -14,7 +15,7 @@ class ExperimentFuzzer(Fuzzer):
 
     def apply(self, data=None):
         object_distribution = generate_distribution(self.config.object_distribution_fn,
-                                                    int(self.config.duration/self.config.step_size))
+                                                    ceil(self.config.duration/self.config.step_size))
 
         # Generate a large enough distribution
         num_distributions = int(self.config.duration * sum(object_distribution))

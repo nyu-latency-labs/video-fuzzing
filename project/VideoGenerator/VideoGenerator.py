@@ -4,6 +4,7 @@ from random import choice
 
 from moviepy.video.VideoClip import ImageClip, VideoClip
 
+from VideoGenerator.Video import Video
 
 VIDEO_ROOT = "../resources"
 JSON_PATH = "config.json"
@@ -19,10 +20,11 @@ def discover_media(root):
             media = []
             for files in os.listdir(dir_path):
                 file_path = os.path.join(dir_path, files)
+                # TODO: Merge if it works
                 if os.path.isfile(file_path) and files.endswith("jpg"):
-                    media.append(ImageClip(file_path))
+                    media.append(Video(file_path))
                 if os.path.isfile(file_path) and files.endswith("mp4"):
-                    media.append(VideoClip(file_path))
+                    media.append(Video(file_path))
 
             all_media[dirs] = media
 
@@ -46,7 +48,8 @@ class VideoGenerator:
             return None
 
         candidate = choice(self.videos[object_type]).copy()
-        candidate = candidate.set_duration(duration).set_start(start_time)
+        candidate.set_start(start_time)
+        candidate.set_duration(duration)
 
         logging.debug("Generated video with start time: %s and duration: %s", candidate.start, candidate.duration)
         return candidate
