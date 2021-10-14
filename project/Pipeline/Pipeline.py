@@ -56,16 +56,19 @@ class Pipeline:
                 transformer_processes = []
                 transformer_result = []
                 with multiprocessing.Manager() as manager:
+                    pool = multiprocessing.Pool()
+                    logging.debug("Found %s cores", multiprocessing.cpu_count())
                     transformer_result_tmp = manager.list()
                     for idx in range(len(preprocessor_result)):
                         video = preprocessor_result[idx]
-                        process = multiprocessing.Process(target=transformer_task,
+                        process = pool.apply_async(transformer_task,
                                                           args=(video, local_transformers, transformer_result_tmp))
-                        transformer_processes.append(process)
-                        process.start()
+                        # transformer_processes.append(process)
+                    pool.close()
+                    pool.join()
 
-                    for process in transformer_processes:
-                        process.join()
+                    # for process in transformer_processes:
+                    #     process.join()
 
                     for res in transformer_result_tmp:
                         transformer_result.append(res.get_video())
