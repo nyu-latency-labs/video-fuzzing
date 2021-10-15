@@ -37,8 +37,6 @@ class Video:
         self.crop_x1 = position
         self.crop_x2 = XY(position.x+size.X, position.y+size.y)
         self.crop_lambda = True
-        # self.crop_lambda = lambda clip: crop(clip, x1=position.x, y1=position.y, x2=position.x+size.x,
-        #                                      y2=position.y+size.y)
 
     def get_video(self):
         clip = None

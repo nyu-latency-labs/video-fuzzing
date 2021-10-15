@@ -2,6 +2,8 @@ import logging
 import multiprocessing
 import uuid
 
+from moviepy.video.VideoClip import ImageClip
+
 from Compositor.Compositor import Compositor
 from Compositor.GridCompositor import GridCompositor
 from Config.Config import Config
@@ -18,8 +20,15 @@ def transformer_task(video, tx_list, out_list):
     clip = video.get_video()
     for tx in tx_list:
         clip = tx.apply(clip)
-    tmp_name = "tmp/" + str(uuid.uuid4()) + ".mp4"
-    clip.write_videofile(tmp_name, 25, "mpeg4", audio=False, bitrate="1000k")
+
+    tmp_name = "tmp/"
+    if type(clip) is ImageClip:
+        tmp_name = tmp_name + str(uuid.uuid4()) + ".jpg"
+        clip.save_frame(tmp_name, 0)
+        logging.debug("Saving ImageClip frame as jpg")
+    else:
+        tmp_name = tmp_name + str(uuid.uuid4()) + ".mp4"
+        clip.write_videofile(tmp_name, 25, "mpeg4", audio=False, bitrate="1000k")
     video.filepath = tmp_name
     out_list.append(video)
     logging.debug("Updated video references")
