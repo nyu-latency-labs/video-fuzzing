@@ -1,10 +1,10 @@
 import copy
-from moviepy.video.VideoClip import ImageClip, VideoClip
+from moviepy.video.VideoClip import ImageClip
 from moviepy.video.fx.crop import crop
 from moviepy.video.fx.resize import resize
 from moviepy.video.io.VideoFileClip import VideoFileClip
 
-from Config.XY import XY
+from Utils.XY import XY
 
 
 class Video:

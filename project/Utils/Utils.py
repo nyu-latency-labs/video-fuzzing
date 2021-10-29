@@ -16,3 +16,16 @@ def timer(name=""):
             return value
         return wrapper_timer
     return decorator_timer
+
+
+def status():
+    """Print the runtime of the decorated function"""
+    def decorator_status(func):
+        @functools.wraps(func)
+        def wrapper_status(*args, **kwargs):
+            logging.info(f"In module {func.__qualname__}")
+            value = func(*args, **kwargs)
+            logging.info(f"Finished module {func.__qualname__}")
+            return value
+        return wrapper_status
+    return decorator_status
