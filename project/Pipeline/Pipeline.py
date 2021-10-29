@@ -10,6 +10,7 @@ from Compositor.MovingCompositor import MovingCompositor
 from Config.Config import Config
 from Fuzzer.ExperimentFuzzer import ExperimentFuzzer
 from Fuzzer.Fuzzer import Fuzzer
+from Transformer.MultiTransformer import MultiTransformer
 from Utils.Timer import timer
 from Processor.PostProcessor import PostProcessor
 from Processor.PreProcessor import PreProcessor
@@ -51,6 +52,8 @@ class Pipeline:
         preprocessor = PreProcessor(config)
         postprocessor = PostProcessor(config)
 
+        multitransformer = MultiTransformer(config)
+
         global_transformers = transformers
 
         fuzzer_output = fuzzer.apply()
@@ -58,44 +61,19 @@ class Pipeline:
         for output in fuzzer_output:
             for i in range(output["num_videos"]):
                 data = output
-                logging.info("In PreProcessor step")
                 data = preprocessor.apply(data)
-                logging.info("PreProcessor step done")
 
                 local_transformers = global_transformers.copy()
                 local_transformers.append(data["transformers"])
+                data["transformers"] = local_transformers
 
-                logging.info("In Transformer pipeline step")
+                data = multitransformer.apply(data)
 
-                transformer_result = []
-                with multiprocessing.Manager() as manager:
-                    pool = multiprocessing.Pool()
-                    logging.debug("Found %s cores", multiprocessing.cpu_count())
-
-                    transformer_result_tmp = manager.list()
-                    for idx in range(len(data["clips"])):
-                        video = data["clips"][idx]
-                        process = pool.apply_async(transformer_task,
-                                                          args=(video, local_transformers, transformer_result_tmp))
-                    pool.close()
-                    pool.join()
-
-                    for res in transformer_result_tmp:
-                        transformer_result.append(res.get_video())
-
-                data["clips"] = transformer_result
-
-                logging.info("Transformer pipeline step done")
-
-                logging.info("In Compositor step")
                 data = compositor.apply(data)
-                logging.info("Compositor step done")
 
                 data["filename"] = output["filename_prefix"] + "_" + str(i) + ".mp4"
 
-                logging.info("In PostProcessor step")
                 postprocessor_output = postprocessor.apply(data)
-                logging.info("PostProcessor step done")
 
     def process_transformer(self, tx):
         transformers = []
