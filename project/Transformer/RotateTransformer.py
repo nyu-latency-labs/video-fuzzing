@@ -1,8 +1,10 @@
 from moviepy.video.VideoClip import ImageClip
 
 from Config.Config import Config
+from Pipeline.Utils import timer
 from Transformer.Transformer import Transformer
 from moviepy.editor import VideoClip
+import logging
 
 import numpy as np
 
@@ -17,6 +19,7 @@ class RotateTransformer(Transformer):
         self.name = "rotate_transformer"
         self.angle = angle
 
+    @timer(name="RotateTransformer")
     def apply(self, clip):
         if type(clip) == ImageClip:
             return rotate(clip, self.angle)

@@ -1,9 +1,10 @@
 from enum import Enum
 
 from Config.Config import Config
+from Pipeline.Utils import timer
 from Transformer.Transformer import Transformer
 from moviepy.editor import VideoClip
-
+import logging
 from Config.XY import XY
 
 DEFAULT_DIMENSION = (100, 100)
@@ -46,6 +47,7 @@ class ResizeTransformer(Transformer):
             self.height = height
             self.type = ResizeType.HEIGHT
 
+    @timer(name="ResizeTransformer")
     def apply(self, clip) -> VideoClip:
         if self.type == ResizeType.DIMENSION:
             new_data = clip.resize(self.dimensions.x, self.dimensions.y)

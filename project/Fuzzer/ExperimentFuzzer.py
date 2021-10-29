@@ -4,6 +4,7 @@ from random import choices
 
 from Config.Config import Config
 from Fuzzer.Fuzzer import Fuzzer
+from Pipeline.Utils import timer
 from Processor.PreProcessor import generate_distribution
 
 
@@ -13,6 +14,7 @@ class ExperimentFuzzer(Fuzzer):
         super().__init__(config, data)
         self.name = "experiment_fuzzer"
 
+    @timer(name="ExperimentProcessor")
     def apply(self, data=None):
         object_distribution = generate_distribution(self.config.object_distribution_fn,
                                                     ceil(self.config.duration/self.config.step_size))

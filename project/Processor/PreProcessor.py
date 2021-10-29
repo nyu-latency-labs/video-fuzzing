@@ -7,6 +7,7 @@ from Config.Config import Config
 from Event.Event import EventType, Event
 from Event.EventSimulator import EventSimulator
 from Pipeline.PipelineUnit import PipelineUnit
+from Pipeline.Utils import timer
 from VideoGenerator.VideoGenerator import VideoGenerator
 
 
@@ -29,20 +30,12 @@ class PreProcessor(PipelineUnit):
         self.video_generator = VideoGenerator(config.media_root)
 
     # Generate videos as per distributions (class, num, time)
+    @timer(name="PreProcessor")
     def apply(self, data):
 
         object_distribution = data["object_distribution"]
-        if object_distribution is None:
-            object_distribution = generate_distribution(self.config.object_distribution_fn,
-                                                        ceil(self.config.duration/self.config.step_size))
-
         time_distribution = data["time_distribution"]
-        if time_distribution is None:
-            time_distribution = generate_distribution(self.config.time_distribution_fn,
-                                                      self.config.step_size * sum(object_distribution))
         object_types = data["object_types"]
-        if object_types is None:
-            object_types = choices(self.config.object_classes, k=self.config.step_size * sum(object_distribution))
 
         simulator = EventSimulator()
 

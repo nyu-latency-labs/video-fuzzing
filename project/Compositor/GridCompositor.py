@@ -12,6 +12,7 @@ from Config.Config import Config
 from Event.Event import Event, EventType
 from Event.EventSimulator import EventSimulator
 from Config.XY import XY
+from Pipeline.Utils import timer
 
 
 def get_closest_square(num):
@@ -68,6 +69,7 @@ class GridCompositor(Compositor):
     def __init__(self, config: Config):
         super().__init__(config)
 
+    @timer(name="GridCompositor")
     def apply(self, clips):
         logging.debug("Positioned %s clips", len(clips))
 

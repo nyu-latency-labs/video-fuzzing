@@ -5,6 +5,7 @@ from moviepy.video.compositing.CompositeVideoClip import CompositeVideoClip
 
 from Config.Config import Config
 from Pipeline.PipelineUnit import PipelineUnit
+from Pipeline.Utils import timer
 
 
 class PostProcessor(PipelineUnit):
@@ -12,6 +13,7 @@ class PostProcessor(PipelineUnit):
     def __init__(self, config: Config):
         self.config = config
 
+    @timer(name="PostProcessor")
     def apply(self, data) -> VideoClip:
         video = data["video"]
         filename = data["filename"]

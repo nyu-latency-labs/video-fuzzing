@@ -6,9 +6,11 @@ from moviepy.video.VideoClip import ImageClip
 
 from Compositor.Compositor import Compositor
 from Compositor.GridCompositor import GridCompositor
+from Compositor.MovingCompositor import MovingCompositor
 from Config.Config import Config
 from Fuzzer.ExperimentFuzzer import ExperimentFuzzer
 from Fuzzer.Fuzzer import Fuzzer
+from Pipeline.Utils import timer
 from Processor.PostProcessor import PostProcessor
 from Processor.PreProcessor import PreProcessor
 from Transformer.ResizeTransformer import ResizeTransformer
@@ -37,6 +39,7 @@ def transformer_task(video, tx_list, out_list):
 class Pipeline:
     config = None
 
+    @timer(name="Pipeline")
     def apply(self, filename):
         config = Config(filename)
         self.config = config
@@ -62,7 +65,7 @@ class Pipeline:
                 local_transformers.append(output["transformers"])
 
                 logging.info("In Transformer pipeline step")
-                transformer_processes = []
+
                 transformer_result = []
                 with multiprocessing.Manager() as manager:
                     pool = multiprocessing.Pool()
@@ -72,12 +75,8 @@ class Pipeline:
                         video = preprocessor_result[idx]
                         process = pool.apply_async(transformer_task,
                                                           args=(video, local_transformers, transformer_result_tmp))
-                        # transformer_processes.append(process)
                     pool.close()
                     pool.join()
-
-                    # for process in transformer_processes:
-                    #     process.join()
 
                     for res in transformer_result_tmp:
                         transformer_result.append(res.get_video())
@@ -128,6 +127,8 @@ class Pipeline:
 
         if cs_type == "grid_compositor":
             return GridCompositor.create_from_config(self.config)
+        if cs_type == "moving_compositor":
+            return MovingCompositor.create_from_config(self.config)
         else:
             return Compositor(self.config)
 
