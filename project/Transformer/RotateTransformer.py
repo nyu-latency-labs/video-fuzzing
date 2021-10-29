@@ -1,14 +1,9 @@
 from moviepy.video.VideoClip import ImageClip
 
-from Config.Config import Config
-from Pipeline.Utils import timer
+from Utils.Timer import timer
 from Transformer.Transformer import Transformer
-from moviepy.editor import VideoClip
-import logging
 
 import numpy as np
-
-from moviepy.decorators import apply_to_mask
 
 
 class RotateTransformer(Transformer):
@@ -19,11 +14,16 @@ class RotateTransformer(Transformer):
         self.name = "rotate_transformer"
         self.angle = angle
 
-    @timer(name="RotateTransformer")
+    @timer
     def apply(self, clip):
+        # clip = data["clip"]
         if type(clip) == ImageClip:
-            return rotate(clip, self.angle)
-        return clip.rotate(self.angle)
+            new_data = rotate(clip, self.angle)
+        else:
+            new_data = clip.rotate(self.angle)
+
+        # data["clip"] = new_data
+        return new_data
 
     @classmethod
     def create_from_config(cls, data):

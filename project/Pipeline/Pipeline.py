@@ -10,7 +10,7 @@ from Compositor.MovingCompositor import MovingCompositor
 from Config.Config import Config
 from Fuzzer.ExperimentFuzzer import ExperimentFuzzer
 from Fuzzer.Fuzzer import Fuzzer
-from Pipeline.Utils import timer
+from Utils.Timer import timer
 from Processor.PostProcessor import PostProcessor
 from Processor.PreProcessor import PreProcessor
 from Transformer.ResizeTransformer import ResizeTransformer
@@ -39,7 +39,7 @@ def transformer_task(video, tx_list, out_list):
 class Pipeline:
     config = None
 
-    @timer(name="Pipeline")
+    @timer
     def apply(self, filename):
         config = Config(filename)
         self.config = config
@@ -57,12 +57,13 @@ class Pipeline:
 
         for output in fuzzer_output:
             for i in range(output["num_videos"]):
+                data = output
                 logging.info("In PreProcessor step")
-                preprocessor_result = preprocessor.apply(output)
+                data = preprocessor.apply(data)
                 logging.info("PreProcessor step done")
 
                 local_transformers = global_transformers.copy()
-                local_transformers.append(output["transformers"])
+                local_transformers.append(data["transformers"])
 
                 logging.info("In Transformer pipeline step")
 
@@ -70,9 +71,10 @@ class Pipeline:
                 with multiprocessing.Manager() as manager:
                     pool = multiprocessing.Pool()
                     logging.debug("Found %s cores", multiprocessing.cpu_count())
+
                     transformer_result_tmp = manager.list()
-                    for idx in range(len(preprocessor_result)):
-                        video = preprocessor_result[idx]
+                    for idx in range(len(data["clips"])):
+                        video = data["clips"][idx]
                         process = pool.apply_async(transformer_task,
                                                           args=(video, local_transformers, transformer_result_tmp))
                     pool.close()
@@ -81,19 +83,18 @@ class Pipeline:
                     for res in transformer_result_tmp:
                         transformer_result.append(res.get_video())
 
+                data["clips"] = transformer_result
+
                 logging.info("Transformer pipeline step done")
 
                 logging.info("In Compositor step")
-                compositor_result = compositor.apply(transformer_result)
+                data = compositor.apply(data)
                 logging.info("Compositor step done")
 
-                postprocessor_input = {
-                    "video": compositor_result,
-                    "filename": output["filename_prefix"] + "_" + str(i) + ".mp4"
-                }
+                data["filename"] = output["filename_prefix"] + "_" + str(i) + ".mp4"
 
                 logging.info("In PostProcessor step")
-                postprocessor_output = postprocessor.apply(postprocessor_input)
+                postprocessor_output = postprocessor.apply(data)
                 logging.info("PostProcessor step done")
 
     def process_transformer(self, tx):

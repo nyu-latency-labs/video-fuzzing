@@ -1,5 +1,3 @@
-from math import ceil
-from random import choices
 import logging
 from moviepy.video.VideoClip import VideoClip
 
@@ -7,7 +5,7 @@ from Config.Config import Config
 from Event.Event import EventType, Event
 from Event.EventSimulator import EventSimulator
 from Pipeline.PipelineUnit import PipelineUnit
-from Pipeline.Utils import timer
+from Utils.Timer import timer
 from VideoGenerator.VideoGenerator import VideoGenerator
 
 
@@ -30,7 +28,7 @@ class PreProcessor(PipelineUnit):
         self.video_generator = VideoGenerator(config.media_root)
 
     # Generate videos as per distributions (class, num, time)
-    @timer(name="PreProcessor")
+    @timer
     def apply(self, data):
 
         object_distribution = data["object_distribution"]
@@ -72,7 +70,8 @@ class PreProcessor(PipelineUnit):
 
             current_event = simulator.get_event()
 
-        return final_clips
+        data["clips"] = final_clips
+        return data
 
     def remove_video(self, current_event, simulator):
         event = simulator.get_video_event()

@@ -11,8 +11,8 @@ from Compositor.Compositor import Compositor
 from Config.Config import Config
 from Event.Event import Event, EventType
 from Event.EventSimulator import EventSimulator
-from Config.XY import XY
-from Pipeline.Utils import timer
+from Utils.XY import XY
+from Utils.Timer import timer
 
 
 def get_closest_square(num):
@@ -69,9 +69,9 @@ class GridCompositor(Compositor):
     def __init__(self, config: Config):
         super().__init__(config)
 
-    @timer(name="GridCompositor")
-    def apply(self, clips):
-        logging.debug("Positioned %s clips", len(clips))
+    @timer
+    def apply(self, data):
+        clips = data["clips"]
 
         if clips is None or clips is []:
             return ImageClip(self.config.data["background_path"]).resize(self.config.frame_size.get_xy())
@@ -102,8 +102,9 @@ class GridCompositor(Compositor):
             for clip in positioned_clips:
                 final_clips.append(self.resize_clip(clip, block_size))
 
-        video = CompositeVideoClip(final_clips, use_bgclip=True).set_audio(None)
-        return video
+        video = CompositeVideoClip(final_clips, use_bgclip=True)
+        data["composite_video"] = video
+        return data
 
     def crop_clips(self, clip: VideoClip, size: XY):
         x, y = clip.position

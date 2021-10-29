@@ -11,7 +11,7 @@ class Fuzzer(PipelineUnit):
         self.transformers = data["transformers"]
 
     def apply(self, data=None):
-        pass
+        return data
 
     @classmethod
     def create_from_config(cls, config: Config, data):

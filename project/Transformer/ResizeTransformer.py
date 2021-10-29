@@ -1,11 +1,9 @@
 from enum import Enum
 
-from Config.Config import Config
-from Pipeline.Utils import timer
+from Utils.Timer import timer
 from Transformer.Transformer import Transformer
 from moviepy.editor import VideoClip
-import logging
-from Config.XY import XY
+from Utils.XY import XY
 
 DEFAULT_DIMENSION = (100, 100)
 DEFAULT_RATIO = 1
@@ -47,8 +45,9 @@ class ResizeTransformer(Transformer):
             self.height = height
             self.type = ResizeType.HEIGHT
 
-    @timer(name="ResizeTransformer")
+    @timer
     def apply(self, clip) -> VideoClip:
+        # clip = data["clip"]
         if self.type == ResizeType.DIMENSION:
             new_data = clip.resize(self.dimensions.x, self.dimensions.y)
         elif self.type == ResizeType.RATIO:
@@ -58,6 +57,7 @@ class ResizeTransformer(Transformer):
         elif self.type == ResizeType.HEIGHT:
             new_data = clip.resize(height=self.height)
 
+        # data["clip"] = new_data
         return new_data
 
     @classmethod

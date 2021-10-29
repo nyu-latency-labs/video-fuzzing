@@ -1,7 +1,7 @@
 import json
 from random import gauss
 
-from Config.XY import XY
+from Utils.XY import XY
 
 
 def process_distribution(ds):
