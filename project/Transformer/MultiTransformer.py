@@ -21,6 +21,7 @@ def transformer_task(video, tx_list, out_list):
     else:
         tmp_name = tmp_name + str(uuid.uuid4()) + ".mp4"
         clip.write_videofile(tmp_name, 25, "mpeg4", audio=False, bitrate="1000k")
+
     video.filepath = tmp_name
     out_list.append(video)
     logging.debug("Updated video references")

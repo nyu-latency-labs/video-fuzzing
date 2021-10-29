@@ -16,6 +16,9 @@ class ExperimentFuzzer(Fuzzer):
 
     @timer
     def apply(self, data=None):
+        if data is None:
+            data = []
+
         object_distribution = generate_distribution(self.config.object_distribution_fn,
                                                     ceil(self.config.duration/self.config.step_size))
 
@@ -28,8 +31,6 @@ class ExperimentFuzzer(Fuzzer):
 
         object_types = choices(self.config.object_classes, k=num_distributions)
 
-        data = []
-
         # Send list of data to be sent down the pipeline
         for tx in self.transformers:
             obj = {
@@ -37,7 +38,7 @@ class ExperimentFuzzer(Fuzzer):
                 "time_distribution": time_distribution,
                 "object_types": object_types,
                 "transformers": tx,
-                "num_videos": 1,
+                "num_videos": self.data["num_videos"],
                 "filename_prefix": self.name + "_" + tx.name
             }
             data.append(obj)

@@ -1,6 +1,6 @@
 {
     "fps": 25,
-    "duration": 5,
+    "duration": 30,
     "allow_overlap": false,
     "step_size": 2,
     "media_root": "../resources",
@@ -21,19 +21,20 @@
                 "type": "rotate_transformer",
                 "angle": 45
             }
-        ]
+        ],
+        "num_videos": 3
     },
     "compositor": {
-        "type": "grid_compositor"
+        "type": "moving_compositor"
     },
     "object_class": ["car", "person", "motorcycle"],
     "object_distribution": {
         "type": "normal",
         "mean": 2,
-        "std": 1
+        "std": 2
     },
     "time_distribution": {
         "type": "linear",
-        "value": 6
+        "value": 3
     }
 }

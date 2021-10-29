@@ -74,16 +74,12 @@ class MovingCompositor(Compositor):
         if clips is None or clips is []:
             return ImageClip(self.config.data["background_path"]).resize(self.config.frame_size.get_xy())
 
-        # Create grid and put videos into positions
-
-        # Calc max videos at a time
         max_vids = calculate_max_videos(clips)
         sqrt = get_closest_square(max_vids)
         self.grid = XY(sqrt, sqrt)
 
         bg_video = ImageClip(self.config.data["background_path"])
         bg_video = resize(bg_video, self.config.frame_size.get_xy()).set_duration(self.config.duration)
-
 
         clipped_clips = []
 
@@ -99,8 +95,6 @@ class MovingCompositor(Compositor):
 
         final_clips = [bg_video]
         positioned_clips = self.position_clips(clipped_clips)
-        for clip in positioned_clips:
-            logging.debug("clip has position: %s", clip.pos)
 
         final_clips.extend(positioned_clips)
         logging.debug("Positioned %s clips", len(final_clips))
@@ -108,10 +102,6 @@ class MovingCompositor(Compositor):
         video = CompositeVideoClip(final_clips, use_bgclip=True)
         data["composite_video"] = video
         return data
-
-    def crop_clips(self, clip: VideoClip, size: XY):
-        x, y = clip.pos
-        return crop(clip, x1=x, y1=y, x2=x + size.x, y2=y + size.y)
 
     def resize_clip(self, clip: VideoClip, size: XY):
         x, y = clip.size
@@ -127,7 +117,6 @@ class MovingCompositor(Compositor):
         clip_quadrant = 0
 
         for clip in clips:
-
             clip_quadrant = (clip_quadrant + 1) % 4
             quadrant_min = XY(clip_quadrant / 2 * quadrant_size.x, (clip_quadrant % 2) * quadrant_size.y)
             position = XY(randrange(quadrant_min.x, quadrant_min.x + quadrant_size.x),
@@ -136,8 +125,7 @@ class MovingCompositor(Compositor):
             direction = XY(randrange(-100, 100), randrange(-100, 100))
             new_clip = clip.set_position(lambda t: (position.x + direction.x*t, position.y + direction.y*t))
             result.append(new_clip)
-            logging.debug("Positioned video with position %s and direction %s cuz quadrant was %s",
-                          position, direction, clip_quadrant)
+            logging.debug("Positioned video with position %s and direction %s", position, direction)
             # Everytime a new position lambda is created and added to the list, all others become the same value
         return result
 

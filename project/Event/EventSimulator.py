@@ -37,7 +37,7 @@ class EventSimulator:
         for e in self.events:
             if e.event_type is EventType.VIDEO_END:
                 self.events.remove(e)
-                logging.debug("Removing video event with data %s", type(e.clip))
+                logging.debug("Removing video event at time %s", e.time)
                 return e
 
         raise IndexError("No more video events found")
