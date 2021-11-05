@@ -21,6 +21,10 @@
             {
                 "type": "rotate_transformer",
                 "angle": 45
+            },
+            {
+                "type": "resize_transformer",
+                "ratio": 0.5
             }
         ],
         "num_videos": 1

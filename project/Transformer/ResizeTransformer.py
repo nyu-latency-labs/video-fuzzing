@@ -45,6 +45,21 @@ class ResizeTransformer(Transformer):
             self.height = height
             self.type = ResizeType.HEIGHT
 
+    def __str__(self):
+        to_str = self.name + ":"
+
+        if self.dimensions is not None:
+            to_str += "x=" + str(self.dimensions.x) + ",y=" + str(self.dimensions.y)
+        elif self.ratio is not None:
+            to_str += "ratio=" + str(self.ratio)
+        elif self.width is not None:
+            to_str += "width=" + str(self.width)
+        elif self.height is not None:
+            to_str += "height=" + str(self.height)
+
+        to_str += ";"
+        return to_str
+
     @timer
     def apply(self, clip) -> VideoClip:
         # clip = data["clip"]

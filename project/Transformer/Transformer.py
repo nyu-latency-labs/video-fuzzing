@@ -13,3 +13,6 @@ class Transformer(PipelineUnit):
     @classmethod
     def create_from_config(cls, data):
         return Transformer(data)
+
+    def __str__(self):
+        raise NotImplementedError("Transformer should implement __str__ method to enable caching")

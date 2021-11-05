@@ -14,6 +14,9 @@ class RotateTransformer(Transformer):
         self.name = "rotate_transformer"
         self.angle = angle
 
+    def __str__(self):
+        return self.name + ":" + "angle=" + str(self.name) + ";"
+
     @timer
     def apply(self, clip):
         # clip = data["clip"]
