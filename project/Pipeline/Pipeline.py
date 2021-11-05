@@ -39,11 +39,11 @@ class Pipeline:
         fuzzer_output = fuzzer.apply(data)
         # For benchmarking
         total_latencies = []
-        for cpu in range(1, 33):
-            logging.info("Running for cpu: " + str(cpu))
+        for time in range(30, 300, 30):
+            logging.info("Running for time: " + str(time))
             latency = []
-            for time in range(30, 300, 30):
-                logging.info("Running for time: " + str(time))
+            for cpu in range(1, 33):
+                logging.info("Running for cpu: " + str(cpu))
                 new_config = copy.copy(config)
                 new_config.duration = time
                 new_config.max_cores = cpu
