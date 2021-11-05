@@ -6,20 +6,20 @@ from moviepy.video.VideoClip import ImageClip
 
 from Utils.Timer import timer
 from Transformer.Transformer import Transformer
-from VideoGenerator.CacheItem import CacheItem
-from VideoGenerator.VideoCache import VideoCache
+from Caching.CacheItem import CacheItem
+from Caching.VideoCache import VideoCache
 
 video_cache = VideoCache()
 
 
 def transformer_task(video, tx_list, out_list):
-    cache_item = video_cache.get_item(video.filepath, tx_list)
-
-    if cache_item is not None:
-        logging.debug("Serving item from cache")
-        video.filepath = cache_item.processed_filename
-        out_list.append(video)
-        return
+    # cache_item = video_cache.get_item(video.filepath, tx_list)
+    #
+    # if cache_item is not None:
+    #     logging.debug("Serving item from cache")
+    #     video.filepath = cache_item.processed_filename
+    #     out_list.append(video)
+    #     return
 
     clip = video.get_video()
     for tx in tx_list:
@@ -34,8 +34,8 @@ def transformer_task(video, tx_list, out_list):
         tmp_name = tmp_name + str(uuid.uuid4()) + ".mp4"
         clip.write_videofile(tmp_name, 25, "mpeg4", audio=False, bitrate="1000k")
 
-    cache_item = CacheItem(video.filepath, tx_list, tmp_name)
-    video_cache.add_item(cache_item)
+    # cache_item = CacheItem(video.filepath, tx_list, tmp_name)
+    # video_cache.add_item(cache_item)
 
     video.filepath = tmp_name
     out_list.append(video)

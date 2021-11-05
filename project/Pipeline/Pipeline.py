@@ -1,6 +1,7 @@
 import copy
 import logging
 import random
+from time import perf_counter
 
 from Config.Config import Config
 from Processor.PostProcessor import PostProcessor
@@ -37,14 +38,23 @@ class Pipeline:
 
         fuzzer_output = fuzzer.apply(data)
         # For benchmarking
-        for time in range(10, 300, 10):
-            logging.info("Running for time: " + str(time))
-            for cpu in range(1, 33):
-                logging.info("Running for cpu: " + str(cpu))
+        total_latencies = []
+        for cpu in range(1, 33):
+            logging.info("Running for cpu: " + str(cpu))
+            latency = []
+            for time in range(30, 300, 30):
+                logging.info("Running for time: " + str(time))
                 new_config = copy.copy(config)
                 new_config.duration = time
                 new_config.max_cores = cpu
+                start_time = perf_counter()
                 self.run_pipeline(fuzzer_output, new_config)
+                end_time = perf_counter()  # 2
+                run_time = end_time - start_time
+                latency.append(run_time)
+            total_latencies.append(latency)
+
+        print(total_latencies)
 
     @timer
     def run_pipeline(self, fuzzer_output, config):

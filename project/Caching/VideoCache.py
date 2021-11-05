@@ -1,5 +1,5 @@
-from VideoGenerator.CacheItem import CacheItem
-from VideoGenerator.Singleton import Singleton
+from Caching.CacheItem import CacheItem
+from Utils.Singleton import Singleton
 
 
 class VideoCache(metaclass=Singleton):

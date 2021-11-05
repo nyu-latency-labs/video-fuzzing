@@ -6,7 +6,7 @@ from Fuzzer.Fuzzer import Fuzzer
 from Transformer.ResizeTransformer import ResizeTransformer
 from Transformer.RotateTransformer import RotateTransformer
 from Transformer.Transformer import Transformer
-from VideoGenerator.Singleton import Singleton
+from Utils.Singleton import Singleton
 
 
 class ComponentProcessor(metaclass=Singleton):

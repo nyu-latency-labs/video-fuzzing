@@ -2,9 +2,7 @@ import os
 import logging
 from random import choice
 
-from moviepy.video.VideoClip import ImageClip, VideoClip
-
-from VideoGenerator.Singleton import Singleton
+from Utils.Singleton import Singleton
 from VideoGenerator.Video import Video
 
 VIDEO_ROOT = "../resources"
