@@ -34,4 +34,5 @@ class Config:
         self.media_root = self.data["media_root"]
         self.frame_size = XY(self.data["dimension"]["x"], self.data["dimension"]["y"])
         self.max_cores = min(self.data["max_cores"], multiprocessing.cpu_count())
+        self.use_cache = self.data["use_cache"]
 

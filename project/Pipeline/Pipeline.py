@@ -27,6 +27,7 @@ class Pipeline:
 
         data = {
             "max_cores": self.config.max_cores,
+            "use_cache": self.config.use_cache,
             "transformers": [
                 {
                     "applied": False,
@@ -66,7 +67,7 @@ class Pipeline:
 
         for output in fuzzer_output:
             for i in range(output["num_videos"]):
-                data = copy.copy(output)
+                data = copy.deepcopy(output)
                 data["filename"] = output["filename_prefix"] + "_" + str(i) + ".mp4"
 
                 processing_pipeline = [preprocessor, multi_transformer, multi_transformer,

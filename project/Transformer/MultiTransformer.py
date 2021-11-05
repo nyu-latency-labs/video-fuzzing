@@ -12,14 +12,15 @@ from Caching.VideoCache import VideoCache
 video_cache = VideoCache()
 
 
-def transformer_task(video, tx_list, out_list):
-    # cache_item = video_cache.get_item(video.filepath, tx_list)
-    #
-    # if cache_item is not None:
-    #     logging.debug("Serving item from cache")
-    #     video.filepath = cache_item.processed_filename
-    #     out_list.append(video)
-    #     return
+def transformer_task(video, use_cache, tx_list, out_list):
+    if use_cache:
+        cache_item = video_cache.get_item(video.filepath, tx_list)
+
+        if cache_item is not None:
+            logging.debug("Serving item from cache")
+            video.filepath = cache_item.processed_filename
+            out_list.append(video)
+            return
 
     clip = video.get_video()
     for tx in tx_list:
@@ -34,8 +35,9 @@ def transformer_task(video, tx_list, out_list):
         tmp_name = tmp_name + str(uuid.uuid4()) + ".mp4"
         clip.write_videofile(tmp_name, 25, "mpeg4", audio=False, bitrate="1000k")
 
-    # cache_item = CacheItem(video.filepath, tx_list, tmp_name)
-    # video_cache.add_item(cache_item)
+    if use_cache:
+        cache_item = CacheItem(video.filepath, tx_list, tmp_name)
+        video_cache.add_item(cache_item)
 
     video.filepath = tmp_name
     out_list.append(video)
@@ -67,7 +69,8 @@ class MultiTransformer(Transformer):
             multi_transformer_result = manager.list()
             for idx in range(len(clips)):
                 video = data["clips"][idx]
-                pool.apply_async(transformer_task, args=(video, transformers["transformers"], multi_transformer_result))
+                pool.apply_async(transformer_task, args=(video, data["use_cache"], transformers["transformers"],
+                                                         multi_transformer_result))
             pool.close()
             pool.join()
 
