@@ -11,6 +11,7 @@ from VideoGenerator.VideoCache import VideoCache
 
 video_cache = VideoCache()
 
+
 def transformer_task(video, tx_list, out_list):
     cache_item = video_cache.get_item(video.filepath, tx_list)
 

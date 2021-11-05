@@ -1,4 +1,6 @@
 import copy
+import logging
+import random
 
 from Config.Config import Config
 from Processor.PostProcessor import PostProcessor
@@ -13,6 +15,7 @@ class Pipeline:
 
     @timer
     def apply(self, filename):
+        random.seed(10)
         config = Config(filename)
         self.config = config
 
@@ -20,12 +23,6 @@ class Pipeline:
 
         transformers = component_processor.process_transformer(config.data["transformers"])
         fuzzer = component_processor.process_fuzzer(config.data["fuzzer"])
-        compositor = component_processor.process_compositor(config.data["compositor"])
-
-        preprocessor = PreProcessor(config)
-        postprocessor = PostProcessor(config)
-
-        multi_transformer = MultiTransformer(config)
 
         data = {
             "max_cores": self.config.max_cores,
@@ -39,6 +36,23 @@ class Pipeline:
         }
 
         fuzzer_output = fuzzer.apply(data)
+        # For benchmarking
+        for time in range(10, 300, 10):
+            logging.info("Running for time: " + str(time))
+            for cpu in range(1, 33):
+                logging.info("Running for cpu: " + str(cpu))
+                new_config = copy.copy(config)
+                new_config.duration = time
+                new_config.max_cores = cpu
+                self.run_pipeline(fuzzer_output, new_config)
+
+    @timer
+    def run_pipeline(self, fuzzer_output, config):
+        component_processor = ComponentProcessor(config)
+        compositor = component_processor.process_compositor(config.data["compositor"])
+        multi_transformer = MultiTransformer(config)
+        preprocessor = PreProcessor(config)
+        postprocessor = PostProcessor(config)
 
         for output in fuzzer_output:
             for i in range(output["num_videos"]):

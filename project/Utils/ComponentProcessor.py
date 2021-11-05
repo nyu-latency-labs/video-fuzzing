@@ -6,9 +6,10 @@ from Fuzzer.Fuzzer import Fuzzer
 from Transformer.ResizeTransformer import ResizeTransformer
 from Transformer.RotateTransformer import RotateTransformer
 from Transformer.Transformer import Transformer
+from VideoGenerator.Singleton import Singleton
 
 
-class ComponentProcessor:
+class ComponentProcessor(metaclass=Singleton):
     config = None
 
     def __init__(self, config):

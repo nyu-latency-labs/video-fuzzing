@@ -1,4 +1,7 @@
 import logging
+from math import ceil
+from random import choices, choice
+
 from moviepy.video.VideoClip import VideoClip
 
 from Config.Config import Config
@@ -30,10 +33,12 @@ class PreProcessor(PipelineUnit):
     # Generate videos as per distributions (class, num, time)
     @timer
     def apply(self, data):
+        object_distribution = generate_distribution(data["object_distribution"],
+                                                    ceil(self.config.duration / self.config.step_size))
 
-        object_distribution = data["object_distribution"]
-        time_distribution = data["time_distribution"]
-        object_types = data["object_types"]
+        time_distribution_fn = data["time_distribution_fn"]
+
+        object_type_fn = lambda: choice(self.config.object_classes)
 
         simulator = EventSimulator()
 
@@ -60,13 +65,13 @@ class PreProcessor(PipelineUnit):
                 logging.debug("Expected %s video at time: %s and got %s", object_distribution[current_event.data],
                               current_event.time, simulator.get_video_events_in_progress())
                 while object_distribution[current_event.data] > simulator.get_video_events_in_progress():
-                    self.add_new_video(current_event, final_clips, object_types, simulator, time_distribution)
+                    self.add_new_video(current_event, final_clips, object_type_fn, simulator, time_distribution_fn)
 
                 while object_distribution[current_event.data] < simulator.get_video_events_in_progress():
                     self.remove_video(current_event, simulator)
 
             if current_event.event_type is EventType.VIDEO_END:
-                self.add_new_video(current_event, final_clips, object_types, simulator, time_distribution)
+                self.add_new_video(current_event, final_clips, object_type_fn, simulator, time_distribution_fn)
 
             current_event = simulator.get_event()
 
@@ -79,8 +84,8 @@ class PreProcessor(PipelineUnit):
         logging.debug("Modified video with start time: %s and set end time to %s",
                       event.clip.start, event.clip.end)
 
-    def add_new_video(self, current_event, final_clips, object_types, simulator, time_distribution):
-        video = self.get_video(object_types.pop(0), time_distribution.pop(0), current_event.time)
+    def add_new_video(self, current_event, final_clips, object_type_fn, simulator, time_distribution_fn):
+        video = self.get_video(object_type_fn(), time_distribution_fn(), current_event.time)
         final_clips.append(video)
         video_event = Event(EventType.VIDEO_END, current_event.time + video.duration, video, current_event.data)
         simulator.add_event(video_event)

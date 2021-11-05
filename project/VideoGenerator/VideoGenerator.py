@@ -4,6 +4,7 @@ from random import choice
 
 from moviepy.video.VideoClip import ImageClip, VideoClip
 
+from VideoGenerator.Singleton import Singleton
 from VideoGenerator.Video import Video
 
 VIDEO_ROOT = "../resources"
@@ -32,7 +33,7 @@ def discover_media(root):
     return obj_types, all_media
 
 
-class VideoGenerator:
+class VideoGenerator(metaclass=Singleton):
     root = VIDEO_ROOT
     videos = None
     object_types = None

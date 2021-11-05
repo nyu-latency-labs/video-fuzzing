@@ -16,18 +16,6 @@ class ExperimentFuzzer(Fuzzer):
 
     @timer
     def apply(self, data):
-        object_distribution = generate_distribution(self.config.object_distribution_fn,
-                                                    ceil(self.config.duration/self.config.step_size))
-
-        # Generate a large enough distribution
-        # TODO reduce the size of pass lambda
-        num_distributions = int(self.config.duration * sum(object_distribution))
-        logging.info("Generating distributions of size %s", num_distributions)
-
-        time_distribution = generate_distribution(self.config.time_distribution_fn, num_distributions)
-
-        object_types = choices(self.config.object_classes, k=num_distributions)
-
         # Send list of data to be sent down the pipeline
         new_data = []
         for tx in self.transformers:
@@ -38,9 +26,9 @@ class ExperimentFuzzer(Fuzzer):
             }
 
             obj = {
-                "object_distribution": object_distribution,
-                "time_distribution": time_distribution,
-                "object_types": object_types,
+                "object_distribution": self.config.object_distribution_fn,
+                "time_distribution_fn": self.config.time_distribution_fn,
+                # "object_types": object_types,
                 "num_videos": self.data["num_videos"],
                 "filename_prefix": self.name + "_" + tx.name,
             }
