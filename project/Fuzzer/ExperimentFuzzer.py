@@ -15,10 +15,7 @@ class ExperimentFuzzer(Fuzzer):
         self.name = "experiment_fuzzer"
 
     @timer
-    def apply(self, data=None):
-        if data is None:
-            data = []
-
+    def apply(self, data):
         object_distribution = generate_distribution(self.config.object_distribution_fn,
                                                     ceil(self.config.duration/self.config.step_size))
 
@@ -32,19 +29,28 @@ class ExperimentFuzzer(Fuzzer):
         object_types = choices(self.config.object_classes, k=num_distributions)
 
         # Send list of data to be sent down the pipeline
+        new_data = []
         for tx in self.transformers:
+            local_transforms = {
+                "applied": False,
+                "transformers": [tx],
+                "type": "local"
+            }
+
             obj = {
                 "object_distribution": object_distribution,
                 "time_distribution": time_distribution,
                 "object_types": object_types,
-                "local_transformers": [tx],
                 "num_videos": self.data["num_videos"],
                 "filename_prefix": self.name + "_" + tx.name,
-                "max_cores": self.config.max_cores
             }
-            data.append(obj)
 
-        return data
+            new_obj = {**obj, **data}
+            new_obj["transformers"].append(local_transforms)
+
+            new_data.append(new_obj)
+
+        return new_data
 
     @classmethod
     def create_from_config(cls, config: Config, data):

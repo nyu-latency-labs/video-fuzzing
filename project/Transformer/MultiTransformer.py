@@ -36,10 +36,13 @@ class MultiTransformer(Transformer):
     @timer
     def apply(self, data):
         clips = data["clips"]
-        if not data["global_transformers_applied"]:
-            transformers = data["global_transformers"]
-        else:
-            transformers = data["local_transformers"]
+        transformers = None
+        for tx in data["transformers"]:
+            if not tx["applied"]:
+                transformers = tx
+
+        if transformers is None:
+            return data
 
         transformer_result = []
         with multiprocessing.Manager() as manager:
@@ -49,7 +52,7 @@ class MultiTransformer(Transformer):
             multi_transformer_result = manager.list()
             for idx in range(len(clips)):
                 video = data["clips"][idx]
-                pool.apply_async(transformer_task, args=(video, transformers, multi_transformer_result))
+                pool.apply_async(transformer_task, args=(video, transformers["transformers"], multi_transformer_result))
             pool.close()
             pool.join()
 
@@ -58,10 +61,7 @@ class MultiTransformer(Transformer):
 
         data["clips"] = transformer_result
 
-        if not data["global_transformers_applied"]:
-            data["global_transformers_applied"] = True
-        elif not data["local_transformers_applied"]:
-            data["local_transformers_applied"] = True
+        transformers["applied"] = True
         return data
 
     @classmethod

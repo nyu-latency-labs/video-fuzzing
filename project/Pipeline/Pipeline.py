@@ -26,19 +26,26 @@ class Pipeline:
         postprocessor = PostProcessor(config)
 
         multi_transformer = MultiTransformer(config)
-        multi_transformer1 = MultiTransformer(config)
 
-        fuzzer_output = fuzzer.apply()
+        data = {
+            "max_cores": self.config.max_cores,
+            "transformers": [
+                {
+                    "applied": False,
+                    "transformers": transformers,
+                    "type": "global"
+                }
+            ]
+        }
+
+        fuzzer_output = fuzzer.apply(data)
 
         for output in fuzzer_output:
             for i in range(output["num_videos"]):
                 data = copy.copy(output)
-                data["global_transformers"] = transformers
-                data["global_transformers_applied"] = False
-                data["local_transformers_applied"] = False
                 data["filename"] = output["filename_prefix"] + "_" + str(i) + ".mp4"
 
-                processing_pipeline = [preprocessor, multi_transformer, multi_transformer1,
+                processing_pipeline = [preprocessor, multi_transformer, multi_transformer,
                                        compositor, postprocessor]
 
                 for processor in processing_pipeline:
