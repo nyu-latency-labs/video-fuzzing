@@ -37,9 +37,10 @@ class ExperimentFuzzer(Fuzzer):
                 "object_distribution": object_distribution,
                 "time_distribution": time_distribution,
                 "object_types": object_types,
-                "transformers": tx,
+                "local_transformers": [tx],
                 "num_videos": self.data["num_videos"],
-                "filename_prefix": self.name + "_" + tx.name
+                "filename_prefix": self.name + "_" + tx.name,
+                "max_cores": self.config.max_cores
             }
             data.append(obj)
 

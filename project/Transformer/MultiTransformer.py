@@ -28,21 +28,23 @@ def transformer_task(video, tx_list, out_list):
 
 
 class MultiTransformer(Transformer):
-    angle = 0
 
     def __init__(self, data):
-        super().__init__()
+        super().__init__(data)
         self.name = "multi_transformer"
 
     @timer
     def apply(self, data):
         clips = data["clips"]
-        transformers = data["transformers"]
+        if not data["global_transformers_applied"]:
+            transformers = data["global_transformers"]
+        else:
+            transformers = data["local_transformers"]
 
         transformer_result = []
         with multiprocessing.Manager() as manager:
-            pool = multiprocessing.Pool()
-            logging.debug("Found %s cores", multiprocessing.cpu_count())
+            pool = multiprocessing.Pool(processes=data["max_cores"])
+            logging.debug("Using %s cores", data["max_cores"])
 
             multi_transformer_result = manager.list()
             for idx in range(len(clips)):
@@ -52,11 +54,16 @@ class MultiTransformer(Transformer):
             pool.join()
 
             for res in multi_transformer_result:
-                transformer_result.append(res.get_video())
+                transformer_result.append(res)
 
         data["clips"] = transformer_result
+
+        if not data["global_transformers_applied"]:
+            data["global_transformers_applied"] = True
+        elif not data["local_transformers_applied"]:
+            data["local_transformers_applied"] = True
         return data
 
     @classmethod
-    def create_from_config(cls, data):
+    def create_from_config(cls, data=None):
         return MultiTransformer(data)

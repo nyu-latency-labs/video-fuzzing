@@ -1,3 +1,4 @@
+import copy
 import logging
 from random import randrange
 
@@ -69,7 +70,7 @@ class MovingCompositor(Compositor):
 
     @timer
     def apply(self, data):
-        clips = data["clips"]
+        clips = [c.get_video() for c in data["clips"]]
 
         if clips is None or clips is []:
             return ImageClip(self.config.data["background_path"]).resize(self.config.frame_size.get_xy())
@@ -95,7 +96,6 @@ class MovingCompositor(Compositor):
 
         final_clips = [bg_video]
         positioned_clips = self.position_clips(clipped_clips)
-
         final_clips.extend(positioned_clips)
         logging.debug("Positioned %s clips", len(final_clips))
 
@@ -123,10 +123,11 @@ class MovingCompositor(Compositor):
                           randrange(quadrant_min.y, quadrant_min.y + quadrant_size.y))
 
             direction = XY(randrange(-100, 100), randrange(-100, 100))
-            new_clip = clip.set_position(lambda t: (position.x + direction.x*t, position.y + direction.y*t))
+            new_clip = clip.set_position(lambda t, px=position.x, dx=direction.x, py=position.y, dy=direction.y:
+                                         (px + dx * t, py + dy * t))
             result.append(new_clip)
             logging.debug("Positioned video with position %s and direction %s", position, direction)
-            # Everytime a new position lambda is created and added to the list, all others become the same value
+
         return result
 
     @classmethod
