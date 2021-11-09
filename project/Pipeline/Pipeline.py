@@ -40,7 +40,7 @@ class Pipeline:
         fuzzer_output = fuzzer.apply(data)
         # For benchmarking
         total_latencies = []
-        for time in range(30, 300, 30):
+        for time in range(30, 330, 30):
             logging.info("Running for time: " + str(time))
             latency = []
             for cpu in range(1, 33):
@@ -68,6 +68,7 @@ class Pipeline:
         for output in fuzzer_output:
             for i in range(output["num_videos"]):
                 data = copy.deepcopy(output)
+                data["max_cores"] = config.max_cores
                 data["filename"] = output["filename_prefix"] + "_" + str(i) + ".mp4"
 
                 processing_pipeline = [preprocessor, multi_transformer, multi_transformer,
