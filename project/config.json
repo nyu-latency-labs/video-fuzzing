@@ -1,6 +1,6 @@
 {
     "fps": 25,
-    "duration": 10,
+    "duration": 40,
     "allow_overlap": false,
     "step_size": 2,
     "media_root": "../resources",
@@ -22,12 +22,16 @@
             {
                 "type": "rotate_transformer",
                 "angle": 45
+            },
+            {
+                "type": "resize_transformer",
+                "ratio": 0.9
             }
         ],
         "num_videos": 1
     },
     "compositor": {
-        "type": "moving_compositor"
+        "type": "grid_compositor"
     },
     "object_class": ["car", "person", "motorcycle"],
     "object_distribution": {
