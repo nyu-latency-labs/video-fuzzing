@@ -1,3 +1,4 @@
+import copy
 import logging
 from math import ceil
 from random import choices
@@ -19,21 +20,21 @@ class ExperimentFuzzer(Fuzzer):
         # Send list of data to be sent down the pipeline
         new_data = []
         for tx in self.transformers:
+            _data = copy.deepcopy(data)
             local_transforms = {
                 "applied": False,
                 "transformers": [tx],
                 "type": "local"
             }
-
             obj = {
-                "object_distribution": self.config.object_distribution_fn,
-                "time_distribution_fn": self.config.time_distribution_fn,
-                # "object_types": object_types,
+                "object_distribution": self.config.object_distribution,
+                "time_distribution": self.config.time_distribution,
+                "object_types": self.config.object_classes,
                 "num_videos": self.data["num_videos"],
                 "filename_prefix": self.name + "_" + tx.name,
             }
 
-            new_obj = {**obj, **data}
+            new_obj = {**_data, **obj}
             new_obj["transformers"].append(local_transforms)
 
             new_data.append(new_obj)
