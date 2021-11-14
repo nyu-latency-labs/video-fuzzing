@@ -2,6 +2,7 @@ import json
 from random import gauss
 import multiprocessing
 
+from DistributionGenerator.RandomDistributionGenerator import RandomDistributionGenerator
 from Utils.XY import XY
 
 
@@ -9,9 +10,11 @@ def process_distribution(ds):
     ds_type = ds["type"]
 
     if ds_type == "normal":
-        return lambda: gauss(ds["mean"], ds["std"])
+        fn = lambda: gauss(ds["mean"], ds["std"])
+        return RandomDistributionGenerator(fn)
     elif ds_type == "linear":
-        return lambda: ds["value"]
+        fn = lambda: ds["value"]
+        return RandomDistributionGenerator(fn)
 
 
 class Config:
@@ -24,8 +27,8 @@ class Config:
             self.data = json.load(f)
 
         self.object_classes = self.data["object_class"]
-        self.object_distribution_fn = process_distribution(self.data["object_distribution"])
-        self.time_distribution_fn = process_distribution(self.data["time_distribution"])
+        self.object_distribution = process_distribution(self.data["object_distribution"])
+        self.time_distribution = process_distribution(self.data["time_distribution"])
 
         self.duration = int(self.data["duration"])
         self.fps = int(self.data["fps"])

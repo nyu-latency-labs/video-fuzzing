@@ -1,6 +1,6 @@
 import logging
 from math import ceil
-from random import choices, choice
+from random import choice
 
 from moviepy.video.VideoClip import VideoClip
 
@@ -8,14 +8,16 @@ from Config.Config import Config
 from Event.Event import EventType, Event
 from Event.EventSimulator import EventSimulator
 from Pipeline.PipelineUnit import PipelineUnit
+from DistributionGenerator.DistributionGenerator import DistributionGenerator
+from DistributionGenerator.RandomDistributionGenerator import RandomDistributionGenerator
 from Utils.Timer import timer
 from VideoGenerator.VideoGenerator import VideoGenerator
 
 
-def generate_distribution(fn, count: int):
+def generate_distribution(distribution_generator: DistributionGenerator, count: int):
     distribution = []
     for i in range(count):
-        k = fn()
+        k = distribution_generator.get_next()
         k = k if k >= 0 else 0
         distribution.append(int(k))
 
@@ -33,12 +35,13 @@ class PreProcessor(PipelineUnit):
     # Generate videos as per distributions (class, num, time)
     @timer
     def apply(self, data):
-        object_distribution = generate_distribution(data["object_distribution"],
-                                                    ceil(self.config.duration / self.config.step_size))
+        object_distribution_generator = generate_distribution(data["object_distribution"],
+                                                              ceil(self.config.duration / self.config.step_size))
 
-        time_distribution_fn = data["time_distribution_fn"]
+        time_distribution_generator = data["time_distribution"]
 
         object_type_fn = lambda: choice(self.config.object_classes)
+        object_type_generator = RandomDistributionGenerator(object_type_fn)
 
         simulator = EventSimulator()
 
@@ -62,30 +65,35 @@ class PreProcessor(PipelineUnit):
                 break
 
             if current_event.event_type is EventType.INTERVAL:
-                logging.debug("Expected %s video at time: %s and got %s", object_distribution[current_event.data],
+                logging.debug("Expected %s video at time: %s and got %s",
+                              object_distribution_generator[current_event.data],
                               current_event.time, simulator.get_video_events_in_progress())
-                while object_distribution[current_event.data] > simulator.get_video_events_in_progress():
-                    self.add_new_video(current_event, final_clips, object_type_fn, simulator, time_distribution_fn)
+                while object_distribution_generator[current_event.data] > simulator.get_video_events_in_progress():
+                    self.add_new_video(current_event, final_clips, object_type_generator, simulator,
+                                       time_distribution_generator)
 
-                while object_distribution[current_event.data] < simulator.get_video_events_in_progress():
+                while object_distribution_generator[current_event.data] < simulator.get_video_events_in_progress():
                     self.remove_video(current_event, simulator)
 
             if current_event.event_type is EventType.VIDEO_END:
-                self.add_new_video(current_event, final_clips, object_type_fn, simulator, time_distribution_fn)
+                self.add_new_video(current_event, final_clips, object_type_generator, simulator,
+                                   time_distribution_generator)
 
             current_event = simulator.get_event()
 
         data["clips"] = final_clips
         return data
 
-    def remove_video(self, current_event, simulator):
+    def remove_video(self, current_event: Event, simulator: EventSimulator):
         event = simulator.get_video_event()
         event.clip.set_end(current_event.time)
         logging.debug("Modified video with start time: %s and set end time to %s",
                       event.clip.start, event.clip.end)
 
-    def add_new_video(self, current_event, final_clips, object_type_fn, simulator, time_distribution_fn):
-        video = self.get_video(object_type_fn(), time_distribution_fn(), current_event.time)
+    def add_new_video(self, current_event, final_clips, object_type_generator: DistributionGenerator,
+                      simulator: EventSimulator, time_distribution_generator: DistributionGenerator):
+        video = self.get_video(object_type_generator.get_next(), time_distribution_generator.get_next(),
+                               current_event.time)
         final_clips.append(video)
         video_event = Event(EventType.VIDEO_END, current_event.time + video.duration, video, current_event.data)
         simulator.add_event(video_event)
