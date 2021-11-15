@@ -31,7 +31,7 @@ class ExperimentFuzzer(Fuzzer):
                 "time_distribution": self.config.time_distribution,
                 "object_types": self.config.object_classes,
                 "num_videos": self.data["num_videos"],
-                "filename_prefix": self.name + "_" + tx.name,
+                "filename_prefix": self.name + "_" + str(tx),
             }
 
             new_obj = {**_data, **obj}
