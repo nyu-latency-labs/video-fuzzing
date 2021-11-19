@@ -95,8 +95,7 @@ class GridCompositor(Compositor):
         # Based on video overlap flag, crop/resize the videos to increase throughput
         block_size = XY(self.config.frame_size.x / self.grid.x, self.config.frame_size.y / self.grid.y)
         if self.config.data["allow_overlap"]:
-            for clip in positioned_clips:
-                final_clips.append(self.crop_clips(clip, block_size))
+            final_clips.extend(positioned_clips)
 
         else:
             for clip in positioned_clips:
@@ -107,8 +106,7 @@ class GridCompositor(Compositor):
         return data
 
     def crop_clips(self, clip: VideoClip, size: XY):
-        x, y = clip.position
-        return crop(clip, x1=x, y1=y, x2=x+size.x, y2=y+size.y)
+        return crop(clip, x1=0, y1=0, x2=size.x, y2=size.y)
 
     def resize_clip(self, clip: VideoClip, size: XY):
         x, y = clip.size

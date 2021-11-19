@@ -1,7 +1,7 @@
 {
     "fps": 25,
     "duration": 40,
-    "allow_overlap": false,
+    "allow_overlap": true,
     "step_size": 2,
     "media_root": "../resources",
     "background_path": "../resources/street.jpg",
@@ -20,12 +20,12 @@
         "type": "experiment_fuzzer",
         "transformers": [
             {
-                "type": "rotate_transformer",
-                "angle": 45
+                "type": "resize_transformer",
+                "ratio": 0.1
             },
             {
                 "type": "resize_transformer",
-                "ratio": 0.9
+                "ratio": 0.05
             }
         ],
         "num_videos": 1
@@ -35,9 +35,8 @@
     },
     "object_class": ["car", "person", "motorcycle"],
     "object_distribution": {
-        "type": "normal",
-        "mean": 2,
-        "std": 1
+        "type": "linear",
+        "value": 1
     },
     "time_distribution": {
         "type": "linear",
