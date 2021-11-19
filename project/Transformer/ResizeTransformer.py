@@ -18,6 +18,9 @@ class ResizeType(Enum):
 
 class ResizeTransformer(Transformer):
     dimensions = None
+    ratio = None
+    width = None
+    height = None
     type = None
 
     def __init__(self,  dim: XY = None, ratio=None, width=None, height=None):
@@ -64,7 +67,7 @@ class ResizeTransformer(Transformer):
     def apply(self, clip) -> VideoClip:
         # clip = data["clip"]
         if self.type == ResizeType.DIMENSION:
-            new_data = clip.resize(self.dimensions.x, self.dimensions.y)
+            new_data = clip.resize(newsize=(self.dimensions.x, self.dimensions.y))
         elif self.type == ResizeType.RATIO:
             new_data = clip.resize(self.ratio)
         elif self.type == ResizeType.WIDTH:

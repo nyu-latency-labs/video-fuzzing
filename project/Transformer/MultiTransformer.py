@@ -57,6 +57,7 @@ class MultiTransformer(Transformer):
         for tx in data["transformers"]:
             if not tx["applied"]:
                 transformers = tx
+                break
 
         if transformers is None:
             return data

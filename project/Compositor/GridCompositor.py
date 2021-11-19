@@ -39,14 +39,17 @@ def calculate_max_videos(clips):
     j = 0
 
     while i < len(clips):
-        if start[i] <= end[j]:
+        if start[i] < end[j]:
             count = count + 1
             if count > max_count:
                 max_count = count
             i = i + 1
-        else:
+        elif start[i] > end[j]:
             count = count - 1
             j = j + 1
+        else:
+            i += 1
+            j += 1
 
     return max_count
 

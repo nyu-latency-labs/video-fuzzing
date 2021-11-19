@@ -13,7 +13,10 @@ class EventSimulator:
         pass
 
     def add_event(self, event: Event):
-        bisect.insort_right(self.events, event)
+        if event.event_type == EventType.VIDEO_END:
+            bisect.insort_left(self.events, event)
+        else:
+            bisect.insort_right(self.events, event)
         logging.debug("Added event of type %s at time %s and data is %s", event.event_type, event.time, event.data)
 
     def has_event(self):
