@@ -1,20 +1,9 @@
 import json
-from random import gauss
 import multiprocessing
 
-from DistributionGenerator.RandomDistributionGenerator import RandomDistributionGenerator
+from DistributionGenerator.DGFactory import DGFactory
 from Utils.XY import XY
 
-
-def process_distribution(ds):
-    ds_type = ds["type"]
-
-    if ds_type == "normal":
-        fn = lambda: gauss(ds["mean"], ds["std"])
-        return RandomDistributionGenerator(fn)
-    elif ds_type == "linear":
-        fn = lambda: ds["value"]
-        return RandomDistributionGenerator(fn)
 
 
 class Config:
@@ -26,9 +15,14 @@ class Config:
         with open(filename) as f:
             self.data = json.load(f)
 
-        self.object_classes = self.data["object_class"]
-        self.object_distribution = process_distribution(self.data["object_distribution"])
-        self.time_distribution = process_distribution(self.data["time_distribution"])
+        object_class_distribution = {
+            "type": "choice",
+            "value": self.data["object_class"]
+        }
+
+        self.object_class_distribution = DGFactory.get_distribution_generator(object_class_distribution)
+        self.object_distribution = DGFactory.get_distribution_generator(self.data["object_distribution"])
+        self.time_distribution = DGFactory.get_distribution_generator(self.data["time_distribution"])
 
         self.duration = int(self.data["duration"])
         self.fps = int(self.data["fps"])
@@ -36,6 +30,27 @@ class Config:
         self.steps = self.duration / self.step_size
         self.media_root = self.data["media_root"]
         self.frame_size = XY(self.data["dimension"]["x"], self.data["dimension"]["y"])
-        self.max_cores = min(self.data["max_cores"], multiprocessing.cpu_count())
+        self.max_tx_cores = min(self.data["max_tx_cores"], multiprocessing.cpu_count())
+        max_total_cores = min(self.data["max_cores"], multiprocessing.cpu_count())
+        self.max_cores = int(max_total_cores/self.max_tx_cores)
         self.use_cache = self.data["use_cache"]
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state['object_distribution']
+        del state['time_distribution']
+        del state['object_class_distribution']
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+
+        # retrieve the excluded method/methods
+        self.object_distribution = DGFactory.get_distribution_generator(self.data["object_distribution"])
+        self.time_distribution = DGFactory.get_distribution_generator(self.data["time_distribution"])
+
+        object_class_distribution = {
+            "type": "choice",
+            "value": self.data["object_class"]
+        }
+        self.object_class_distribution = DGFactory.get_distribution_generator(object_class_distribution)
