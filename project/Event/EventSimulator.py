@@ -53,4 +53,3 @@ class EventSimulator:
                 res += 1
 
         return res
-

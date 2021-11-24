@@ -1,8 +1,9 @@
 from enum import Enum
 
-from Utils.Timer import timer
-from Transformer.Transformer import Transformer
 from moviepy.editor import VideoClip
+
+from Transformer.Transformer import Transformer
+from Utils.Timer import timer
 from Utils.XY import XY
 
 DEFAULT_DIMENSION = (100, 100)
@@ -23,7 +24,7 @@ class ResizeTransformer(Transformer):
     height = None
     type = None
 
-    def __init__(self,  dim: XY = None, ratio=None, width=None, height=None):
+    def __init__(self, dim: XY = None, ratio=None, width=None, height=None):
         super().__init__()
         self.name = "resize_transformer"
 

@@ -1,17 +1,15 @@
-import copy
 import logging
 from random import randrange
 
+from moviepy.editor import VideoClip
 from moviepy.video.VideoClip import ImageClip
 from moviepy.video.compositing.CompositeVideoClip import CompositeVideoClip
 from moviepy.video.fx.resize import resize
-from moviepy.video.fx.crop import crop
-from moviepy.editor import VideoClip
 
 from Compositor.Compositor import Compositor
 from Config.Config import Config
-from Utils.XY import XY
 from Utils.Timer import timer
+from Utils.XY import XY
 
 
 def get_closest_square(num):

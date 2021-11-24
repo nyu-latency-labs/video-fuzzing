@@ -5,7 +5,6 @@ from DistributionGenerator.DGFactory import DGFactory
 from Utils.XY import XY
 
 
-
 class Config:
     data = None
 
@@ -32,7 +31,7 @@ class Config:
         self.frame_size = XY(self.data["dimension"]["x"], self.data["dimension"]["y"])
         self.max_tx_cores = min(self.data["max_tx_cores"], multiprocessing.cpu_count())
         max_total_cores = min(self.data["max_cores"], multiprocessing.cpu_count())
-        self.max_cores = int(max_total_cores/self.max_tx_cores)
+        self.max_cores = int(max_total_cores / self.max_tx_cores)
         self.use_cache = self.data["use_cache"]
 
     def __getstate__(self):

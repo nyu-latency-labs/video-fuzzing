@@ -1,4 +1,3 @@
-from Config.Config import Config
 from Pipeline.PipelineUnit import PipelineUnit
 
 

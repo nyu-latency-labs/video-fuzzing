@@ -4,10 +4,10 @@ import uuid
 
 from moviepy.video.VideoClip import ImageClip
 
-from Utils.Timer import timer
-from Transformer.Transformer import Transformer
 from Caching.CacheItem import CacheItem
 from Caching.VideoCache import VideoCache
+from Transformer.Transformer import Transformer
+from Utils.Timer import timer
 
 video_cache = VideoCache()
 

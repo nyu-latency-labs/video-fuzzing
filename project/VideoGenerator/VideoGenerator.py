@@ -1,5 +1,5 @@
-import os
 import logging
+import os
 from random import choice
 
 from Utils.Singleton import Singleton
@@ -52,4 +52,3 @@ class VideoGenerator(metaclass=Singleton):
 
         logging.debug("Generated video with start time: %s and duration: %s", candidate.start, candidate.duration)
         return candidate
-

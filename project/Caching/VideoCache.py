@@ -3,7 +3,6 @@ from Utils.Singleton import Singleton
 
 
 class VideoCache(metaclass=Singleton):
-
     data = {}
 
     def add_item(self, item: CacheItem):
@@ -25,4 +24,3 @@ class VideoCache(metaclass=Singleton):
                 return item
 
         return None
-

@@ -1,4 +1,3 @@
-
 class DistributionGenerator:
     fn = None
     ds = None

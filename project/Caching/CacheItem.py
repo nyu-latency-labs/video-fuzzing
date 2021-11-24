@@ -1,4 +1,3 @@
-
 class CacheItem:
     original_filename = None
     attributes = set()

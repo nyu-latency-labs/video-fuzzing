@@ -1,9 +1,8 @@
+import numpy as np
 from moviepy.video.VideoClip import ImageClip
 
-from Utils.Timer import timer
 from Transformer.Transformer import Transformer
-
-import numpy as np
+from Utils.Timer import timer
 
 
 class RotateTransformer(Transformer):

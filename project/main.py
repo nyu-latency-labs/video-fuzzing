@@ -1,8 +1,9 @@
-import sys
-import os
-from Pipeline.Pipeline import Pipeline
 import logging
+import os
 import shutil
+import sys
+
+from Pipeline.Pipeline import Pipeline
 
 if __name__ == "__main__":
     logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)

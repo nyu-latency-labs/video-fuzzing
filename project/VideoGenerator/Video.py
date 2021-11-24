@@ -1,4 +1,5 @@
 import copy
+
 from moviepy.video.VideoClip import ImageClip
 from moviepy.video.fx.crop import crop
 from moviepy.video.fx.resize import resize
@@ -35,7 +36,7 @@ class Video:
     # TODO: Fix for multiple crops
     def crop(self, position: XY, size: XY):
         self.crop_x1 = position
-        self.crop_x2 = XY(position.x+size.X, position.y+size.y)
+        self.crop_x2 = XY(position.x + size.X, position.y + size.y)
         self.crop_lambda = True
 
     def get_video(self):

@@ -1,5 +1,6 @@
-from DistributionGenerator.DistributionGenerator import DistributionGenerator
 import random
+
+from DistributionGenerator.DistributionGenerator import DistributionGenerator
 
 
 class RandomDistributionGenerator(DistributionGenerator):
