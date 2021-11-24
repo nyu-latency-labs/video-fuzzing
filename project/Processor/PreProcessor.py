@@ -1,15 +1,13 @@
 import logging
 from math import ceil
-from random import choice
 
 from moviepy.video.VideoClip import VideoClip
 
 from Config.Config import Config
+from DistributionGenerator.DistributionGenerator import DistributionGenerator
 from Event.Event import EventType, Event
 from Event.EventSimulator import EventSimulator
 from Pipeline.PipelineUnit import PipelineUnit
-from DistributionGenerator.DistributionGenerator import DistributionGenerator
-from DistributionGenerator.RandomDistributionGenerator import RandomDistributionGenerator
 from Utils.Timer import timer
 from VideoGenerator.VideoGenerator import VideoGenerator
 
@@ -40,8 +38,7 @@ class PreProcessor(PipelineUnit):
 
         time_distribution_generator = data["time_distribution"]
 
-        object_type_fn = lambda: choice(self.config.object_classes)
-        object_type_generator = RandomDistributionGenerator(object_type_fn)
+        object_type_generator = data["object_type_distribution"]
 
         simulator = EventSimulator()
 

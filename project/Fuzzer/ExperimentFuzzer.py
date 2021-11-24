@@ -1,12 +1,8 @@
 import copy
-import logging
-from math import ceil
-from random import choices
 
 from Config.Config import Config
 from Fuzzer.Fuzzer import Fuzzer
 from Utils.Timer import timer
-from Processor.PreProcessor import generate_distribution
 
 
 class ExperimentFuzzer(Fuzzer):
@@ -29,7 +25,7 @@ class ExperimentFuzzer(Fuzzer):
             obj = {
                 "object_distribution": self.config.object_distribution,
                 "time_distribution": self.config.time_distribution,
-                "object_types": self.config.object_classes,
+                "object_type_distribution": self.config.object_class_distribution,
                 "num_videos": self.data["num_videos"],
                 "filename_prefix": self.name + "_" + str(tx),
             }

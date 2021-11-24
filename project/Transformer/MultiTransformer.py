@@ -64,8 +64,8 @@ class MultiTransformer(Transformer):
 
         transformer_result = []
         with multiprocessing.Manager() as manager:
-            pool = multiprocessing.Pool(processes=data["max_cores"])
-            logging.debug("Using %s cores", data["max_cores"])
+            pool = multiprocessing.Pool(processes=data["max_tx_cores"])
+            logging.debug("Using %s cores", data["max_tx_cores"])
 
             multi_transformer_result = manager.list()
             for idx in range(len(clips)):
