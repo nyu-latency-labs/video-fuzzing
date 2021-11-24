@@ -1,14 +1,32 @@
 import copy
 import logging
 import random
-from time import perf_counter
 
 from Config.Config import Config
 from Processor.PostProcessor import PostProcessor
 from Processor.PreProcessor import PreProcessor
 from Transformer.MultiTransformer import MultiTransformer
 from Utils.ComponentProcessor import ComponentProcessor
+from Utils.NonDaemonicProcess import NestablePool
 from Utils.Timer import timer
+
+
+def pipeline_task(config, inp, pos):
+    component_processor = ComponentProcessor(config)
+    compositor = component_processor.process_compositor(config.data["compositor"])
+    multi_transformer = MultiTransformer(config)
+    preprocessor = PreProcessor(config)
+    postprocessor = PostProcessor(config)
+
+    data = copy.deepcopy(inp)
+    data["max_tx_cores"] = config.max_tx_cores
+    data["filename"] = inp["filename_prefix"] + "_" + str(pos) + ".mp4"
+
+    processing_pipeline = [preprocessor, multi_transformer, multi_transformer,
+                           compositor, postprocessor]
+
+    for processor in processing_pipeline:
+        data = processor.apply(data)
 
 
 class Pipeline:
@@ -27,6 +45,7 @@ class Pipeline:
 
         data = {
             "max_cores": self.config.max_cores,
+            "max_tx_cores": self.config.max_tx_cores,
             "use_cache": self.config.use_cache,
             "transformers": [
                 {
@@ -42,20 +61,13 @@ class Pipeline:
 
     @timer
     def run_pipeline(self, fuzzer_output, config):
-        component_processor = ComponentProcessor(config)
-        compositor = component_processor.process_compositor(config.data["compositor"])
-        multi_transformer = MultiTransformer(config)
-        preprocessor = PreProcessor(config)
-        postprocessor = PostProcessor(config)
+
+        logging.info("Using %s cores", config.max_cores)
+        pool = NestablePool(config.max_cores)
 
         for output in fuzzer_output:
             for i in range(output["num_videos"]):
-                data = copy.deepcopy(output)
-                data["max_cores"] = config.max_cores
-                data["filename"] = output["filename_prefix"] + "_" + str(i) + ".mp4"
+                pool.apply_async(pipeline_task, (config, output, i,))
 
-                processing_pipeline = [preprocessor, multi_transformer, multi_transformer,
-                                       compositor, postprocessor]
-
-                for processor in processing_pipeline:
-                    data = processor.apply(data)
+        pool.close()
+        pool.join()
