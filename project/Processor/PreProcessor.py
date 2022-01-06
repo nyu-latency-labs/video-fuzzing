@@ -4,6 +4,7 @@ from math import ceil
 from moviepy.video.VideoClip import VideoClip
 
 from Config.Config import Config
+from DistributionGenerator.DGFactory import DGFactory
 from DistributionGenerator.DistributionGenerator import DistributionGenerator
 from Event.Event import EventType, Event
 from Event.EventSimulator import EventSimulator
@@ -33,12 +34,13 @@ class PreProcessor(PipelineUnit):
     # Generate videos as per distributions (class, num, time)
     @timer
     def apply(self, data):
-        object_distribution_generator = generate_distribution(data["object_distribution"],
+        object_distribution = DGFactory.get_distribution_generator(data["object_distribution"])
+        object_distribution_generator = generate_distribution(object_distribution,
                                                               ceil(self.config.duration / self.config.step_size))
 
-        time_distribution_generator = data["time_distribution"]
+        time_distribution_generator = DGFactory.get_distribution_generator(data["time_distribution"], self.config.duration)
 
-        object_type_generator = data["object_type_distribution"]
+        object_type_generator = DGFactory.get_distribution_generator(data["object_type_distribution"])
 
         simulator = EventSimulator()
 

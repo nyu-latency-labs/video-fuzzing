@@ -73,10 +73,10 @@ class GridCompositor(Compositor):
 
     @timer
     def apply(self, data):
-        clips = [c.get_video() for c in data["clips"]]
+        if "clips" not in data or data["clips"] is []:
+            raise Exception("Clips cannot be empty!")
 
-        if clips is None or clips is []:
-            return ImageClip(self.config.data["background_path"]).resize(self.config.frame_size.get_xy())
+        clips = [c.get_video() for c in data["clips"]]
 
         # Create grid and put videos into positions
 

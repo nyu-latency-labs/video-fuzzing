@@ -52,6 +52,9 @@ class MultiTransformer(Transformer):
 
     @timer
     def apply(self, data):
+        if "clips" not in data or data["clips"] is []:
+            raise Exception("Clips cannot be empty!")
+
         clips = data["clips"]
         transformers = None
         for tx in data["transformers"]:

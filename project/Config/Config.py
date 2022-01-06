@@ -19,10 +19,6 @@ class Config:
             "value": self.data["object_class"]
         }
 
-        self.object_class_distribution = DGFactory.get_distribution_generator(object_class_distribution)
-        self.object_distribution = DGFactory.get_distribution_generator(self.data["object_distribution"])
-        self.time_distribution = DGFactory.get_distribution_generator(self.data["time_distribution"])
-
         self.duration = int(self.data["duration"])
         self.fps = int(self.data["fps"])
         self.step_size = int(self.data["step_size"])
@@ -33,6 +29,10 @@ class Config:
         max_total_cores = min(self.data["max_cores"], multiprocessing.cpu_count())
         self.max_cores = int(max_total_cores / self.max_tx_cores)
         self.use_cache = self.data["use_cache"]
+
+        self.object_class_distribution = object_class_distribution
+        self.object_distribution = self.data["object_distribution"]
+        self.time_distribution = self.data["time_distribution"]
 
     def __getstate__(self):
         state = self.__dict__.copy()

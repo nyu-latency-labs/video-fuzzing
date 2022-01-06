@@ -3,23 +3,31 @@ import random
 from DistributionGenerator.DistributionGenerator import DistributionGenerator
 
 
-class RandomDG(DistributionGenerator):
+class FixedRandomDG(DistributionGenerator):
     random_state = None
+    fixed_fn = None
 
-    def __init__(self, ds, fn=None):
+    def __init__(self, ds, time, fn=None):
         super().__init__(ds)
+
+        self.fixed_fn = lambda: time
 
         if fn is not None:
             self.fn = fn
         else:
             self.process_distribution()
 
-        random.seed(10)
-        # random.seed(random.randint(1, 100))
+        # random.seed(10)
+        random.seed(random.randint(1, 100))
 
         self.random_state = random.getstate()
 
     def get_next(self):
+        if self.fixed_fn is not None:
+            temp = self.fixed_fn()
+            self.fixed_fn = None
+            return temp
+
         random.setstate(self.random_state)
         data = self.fn()
         self.random_state = random.getstate()
