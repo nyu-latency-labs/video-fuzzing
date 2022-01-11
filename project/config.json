@@ -1,6 +1,6 @@
 {
   "fps": 25,
-  "duration": 10,
+  "duration": 40,
   "allow_overlap": false,
   "step_size": 2,
   "media_root": "../resources",
@@ -27,13 +27,6 @@
           "x": 200,
           "y": 200
         }
-      },
-      {
-        "type": "resize_transformer",
-        "dimension": {
-          "x": 400,
-          "y": 400
-        }
       }
     ],
     "num_videos": 8
@@ -47,11 +40,14 @@
     "motorcycle"
   ],
   "object_distribution": {
-    "type": "linear",
-    "value": 4
+    "type": "normal",
+    "mean": 5,
+    "std": 2
   },
   "time_distribution": {
-    "type": "linear",
-    "value": 3
+    "type": "normal",
+    "mean": 5,
+    "std": 2,
+    "fixed_objects": 1
   }
 }
