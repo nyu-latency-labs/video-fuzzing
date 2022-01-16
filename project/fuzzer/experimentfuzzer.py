@@ -1,4 +1,5 @@
 import copy
+import logging
 
 from config.config import Config
 from fuzzer.fuzzer import Fuzzer
@@ -17,9 +18,11 @@ class ExperimentFuzzer(Fuzzer):
         new_data = []
 
         # distribute remaining cores between transformers
+        # TODO: Add remaining cores
         quotient_cores = int(self.config.max_cores / (self.config.video_copies * len(self.transformers)))
         quotient_cores = 1 if quotient_cores < 0 else quotient_cores
-        remainder_cores = self.config.max_cores % (self.config.video_copies * len(self.transformers))
+
+        self.config.pipeline_cores = min(self.config.max_cores, (self.config.video_copies * len(self.transformers)))
 
         for tx in self.transformers:
             _data = copy.deepcopy(data)
@@ -32,11 +35,11 @@ class ExperimentFuzzer(Fuzzer):
                 "object_distribution": self.config.object_distribution,
                 "time_distribution": self.config.time_distribution,
                 "object_type_distribution": self.config.object_class_distribution,
-                "num_videos": self.config.video_copies,
                 "filename_prefix": self.name + "_" + str(tx),
-                "max_tx_cores": quotient_cores + (1 if remainder_cores > 0 else 0)
+                "max_tx_cores": quotient_cores,
             }
-            remainder_cores -= 1
+
+            logging.debug(f"Setting max tx cores as {quotient_cores}")
 
             new_obj = {**_data, **obj}
             new_obj["transformers"].append(local_transforms)

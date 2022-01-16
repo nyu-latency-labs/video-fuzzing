@@ -27,6 +27,7 @@ class Config:
         self.media_root: str = self.data["media_root"]
         self.frame_size: Pair = Pair(self.data["dimension"]["x"], self.data["dimension"]["y"])
         self.max_cores: int = min(self.data["max_cores"], multiprocessing.cpu_count())
+        self.pipeline_cores = self.max_cores
         self.use_cache: bool = self.data["use_cache"]
 
         self.object_class_distribution = object_class_distribution

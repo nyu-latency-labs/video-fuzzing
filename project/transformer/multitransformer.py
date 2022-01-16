@@ -10,12 +10,14 @@ from moviepy.video.VideoClip import ImageClip
 from caching.cacheitem import CacheItem
 from caching.videocache import VideoCache
 from transformer.transformer import Transformer
+from utils.multiprocessinglog import logger_init, worker_init
 from utils.timer import timer
 from video_generator.video import Video
 
 video_cache = VideoCache()
 
 
+@timer
 def transformer_task(video: Video, use_cache: bool, tx_list: list[Transformer], out_list: list[Video]):
     cache_item: Optional[CacheItem] = None
 
@@ -71,15 +73,18 @@ class MultiTransformer(Transformer):
                 break
 
         transformer_result = []
+        logging.debug(f"Using {data['max_tx_cores']} cores")
+
+        q_listener, q = logger_init()
+        pool = multiprocessing.Pool(1, worker_init, [q])
+
         with multiprocessing.Manager() as manager:
-            pool = multiprocessing.Pool(processes=data["max_tx_cores"])
-            logging.debug("Using %s cores", data["max_tx_cores"])
 
             multi_transformer_result = manager.list()
             results = []
             for video in clips:
                 results.append(pool.apply_async(transformer_task, args=(video, data["use_cache"],
-                                                transformers["transformers"], multi_transformer_result)))
+                                                                        transformers["transformers"], multi_transformer_result)))
                 # transformer_task(video, data["use_cache"], transformers["transformers"], multi_transformer_result)
             pool.close()
 

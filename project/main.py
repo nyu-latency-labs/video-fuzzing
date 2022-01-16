@@ -6,7 +6,7 @@ import sys
 from pipeline.pipeline import Pipeline
 
 if __name__ == "__main__":
-    logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
+    logging.basicConfig(format='[%(asctime)s] %(process)s %(filename)s:%(lineno)d %(levelname)s - %(message)s', level=logging.DEBUG)
     file = sys.argv[1]
 
     os.makedirs("tmp/", exist_ok=True)

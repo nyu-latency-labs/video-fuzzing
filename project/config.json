@@ -29,7 +29,7 @@
       }
     ]
   },
-  "num_video_copies": 1,
+  "num_video_copies": 3,
   "compositor": {
     "type": "grid_compositor"
   },

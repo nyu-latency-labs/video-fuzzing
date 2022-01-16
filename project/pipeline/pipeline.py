@@ -8,10 +8,12 @@ from processor.postprocessor import PostProcessor
 from processor.preprocessor import PreProcessor
 from transformer.multitransformer import MultiTransformer
 from utils.componentprocessor import ComponentProcessor
+from utils.multiprocessinglog import worker_init, logger_init
 from utils.nondaemonicprocess import NestablePool
 from utils.timer import timer
 
 
+@timer
 def pipeline_task(config: Config, data: dict, n: int):
     component_processor = ComponentProcessor(config)
     compositor = component_processor.process_compositor(config.data["compositor"])
@@ -86,12 +88,14 @@ class Pipeline:
     @timer
     def run_pipeline(self, fuzzer_output: dict, config: Config):
 
-        logging.info("Using %s cores", config.max_cores)
-        pool = NestablePool(config.max_cores)
+        logging.info("Using %s cores", config.pipeline_cores)
+
+        q_listener, q = logger_init()
+        pool = NestablePool(config.pipeline_cores, worker_init, [q])
 
         results = []
         for output in fuzzer_output:
-            for i in range(output["num_videos"]):
+            for i in range(config.video_copies):
                 results.append(pool.apply_async(pipeline_task, (copy.deepcopy(config), copy.deepcopy(output), i,)))
                 # pipeline_task(copy.deepcopy(config), copy.deepcopy(output), i)
         pool.close()
