@@ -1,15 +1,12 @@
 import logging
 from math import ceil
-from typing import Optional
-
-from moviepy.video.VideoClip import VideoClip
 
 from config.config import Config
 from distribution_generator.dgfactory import DGFactory
 from distribution_generator.distributiongenerator import DistributionGenerator
 from event.event import EventType, Event
 from event.eventsimulator import EventSimulator
-from pipeline.pipelineunit import PipelineUnit
+from processor.processor import Processor
 from utils.timer import timer
 from video_generator.video import Video
 from video_generator.videogenerator import VideoGenerator
@@ -26,12 +23,13 @@ def generate_distribution(distribution_generator: DistributionGenerator, count: 
     return distribution
 
 
-class PreProcessor(PipelineUnit):
+class PreProcessor(Processor):
     video_generator: VideoGenerator = None
 
     def __init__(self, config: Config):
-        self.config = config
+        super().__init__(config)
         self.video_generator = VideoGenerator(config.media_root)
+        self.name = "pre_processor"
 
     # Generate videos as per distributions (class, num, time)
     @timer
@@ -53,7 +51,7 @@ class PreProcessor(PipelineUnit):
 
         end_simulation_event = Event(EventType.END_SIMULATION, self.config.duration)
         simulator.add(end_simulation_event)
-        final_clips = []
+        final_clips: list[Video] = []
 
         # Event Simulation
         # Do not worry about trailing clips. They will be cut off at post-processing step
@@ -88,17 +86,19 @@ class PreProcessor(PipelineUnit):
     def remove_video(self, current_event: Event, simulator: EventSimulator):
         event = simulator.get_video_event()
         event.clip.set_end(current_event.time)
-        logging.debug("Modified video with start time: %s and set end time to %s",
-                      event.clip.start, event.clip.end)
+
+        logging.debug(f"Removing video with start time: {event.clip.start} and set end time to {event.clip.end}")
 
     def add_video(self, current_event: Event, final_clips: list[Video], object_type_generator: DistributionGenerator,
                   simulator: EventSimulator, time_distribution_generator: DistributionGenerator):
-        video = self.get_video(object_type_generator.next(), time_distribution_generator.next(), current_event.time)
+        video = self.get_video(object_type_generator.next(), int(time_distribution_generator.next()), current_event.time)
         final_clips.append(video)
         video_event = Event(EventType.VIDEO_END, current_event.time + video.duration, video, current_event.data)
         simulator.add(video_event)
 
-    def get_video(self, object_type: str, object_duration: int, start_time: int) -> Optional[Video]:
+        logging.debug(f"Adding video with start time: {video.start} and set end time to {video.end}")
+
+    def get_video(self, object_type: str, object_duration: int, start_time: int) -> Video:
         return self.video_generator.get(object_type, object_duration, start_time)
 
     def validate(self, data):

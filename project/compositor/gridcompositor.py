@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 from typing import Optional
 
-from moviepy.Clip import Clip
 from moviepy.editor import VideoClip
 from moviepy.video.VideoClip import ImageClip
 from moviepy.video.compositing.CompositeVideoClip import CompositeVideoClip
@@ -16,6 +15,7 @@ from event.event import Event, EventType
 from event.eventsimulator import EventSimulator
 from utils.timer import timer
 from utils.pair import Pair
+from video_generator.video import Video
 
 
 def get_closest_square(num: int) -> int:
@@ -25,7 +25,7 @@ def get_closest_square(num: int) -> int:
     return val
 
 
-def calculate_max_videos(clips: list[Clip]) -> int:
+def calculate_max_videos(clips: list[Video]) -> int:
     max_count = 0
     count = 0
     start = []
@@ -76,10 +76,10 @@ class GridCompositor(Compositor):
         super().__init__(config)
 
     @timer
-    def apply(self, data):
+    def apply(self, data: dict):
         self.validate(data)
 
-        clips = [c.get() for c in data["clips"]]
+        clips: list[Video] = data["clips"]
 
         # Create grid and put videos into positions
         # Calc max videos at a time
@@ -111,7 +111,10 @@ class GridCompositor(Compositor):
 
     def validate(self, data: dict):
         if "clips" not in data or not data["clips"]:
-            raise AssertionError("Clip list empty. Cannot transform")
+            raise AssertionError("Clip list empty. Cannot composite")
+
+        if any(clip is None for clip in data["clips"]):
+            raise AssertionError("NoneType clips are not allowed")
 
     def crop_clips(self, clip: VideoClip, size: Pair):
         return crop(clip, x1=0, y1=0, x2=size.first, y2=size.second)
@@ -122,7 +125,7 @@ class GridCompositor(Compositor):
             return resize(clip, height=size.second)
         return resize(clip, width=size.first)
 
-    def position_clips(self, clips):
+    def position_clips(self, clips: list[Video]):
         simulator = EventSimulator()
         result = []
 
@@ -150,9 +153,8 @@ class GridCompositor(Compositor):
                 self.grid_state[position.first][position.second] = 1
 
                 new_position = block_size.first * position.first, block_size.second * position.second
-                new_clip = curr_event.clip.set_position(new_position)
+                new_clip = curr_event.clip.get().set_position(new_position)
 
-                assert type(position) == Pair
                 end_event = Event(EventType.VIDEO_END, new_clip.end, new_clip, position)
                 logging.debug("Setting event with data %s, %s", end_event.data.first, end_event.data.second)
                 result.append(new_clip)

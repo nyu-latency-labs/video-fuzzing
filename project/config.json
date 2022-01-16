@@ -6,7 +6,6 @@
   "media_root": "../resources",
   "background_path": "../resources/street.jpg",
   "max_cores": 8,
-  "max_tx_cores": 1,
   "use_cache": true,
   "dimension": {
     "x": 400,
@@ -28,9 +27,9 @@
           "y": 200
         }
       }
-    ],
-    "num_videos": 8
+    ]
   },
+  "num_video_copies": 1,
   "compositor": {
     "type": "grid_compositor"
   },

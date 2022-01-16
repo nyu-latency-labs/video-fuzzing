@@ -3,6 +3,7 @@ import logging
 import random
 
 from config.config import Config
+from processor.metadataprocessor import MetadataProcessor
 from processor.postprocessor import PostProcessor
 from processor.preprocessor import PreProcessor
 from transformer.multitransformer import MultiTransformer
@@ -17,10 +18,11 @@ def pipeline_task(config: Config, data: dict, n: int):
     multi_transformer = MultiTransformer(config)
     preprocessor = PreProcessor(config)
     postprocessor = PostProcessor(config)
+    metaprocessor = MetadataProcessor(config)
 
-    data["filename"] = data["filename_prefix"] + "_" + str(n) + ".mp4"
+    data["filename"] = data["filename_prefix"] + "_" + str(n)
 
-    processing_pipeline = [preprocessor, multi_transformer, multi_transformer, compositor, postprocessor]
+    processing_pipeline = [preprocessor, metaprocessor, multi_transformer, multi_transformer, compositor, postprocessor]
 
     for processor in processing_pipeline:
         data = processor.apply(data)
@@ -42,7 +44,6 @@ class Pipeline:
 
         data = {
             "max_cores": self.config.max_cores,
-            "max_tx_cores": self.config.max_tx_cores,
             "use_cache": self.config.use_cache,
             "transformers": [
                 {
@@ -92,7 +93,7 @@ class Pipeline:
         for output in fuzzer_output:
             for i in range(output["num_videos"]):
                 results.append(pool.apply_async(pipeline_task, (copy.deepcopy(config), copy.deepcopy(output), i,)))
-
+                # pipeline_task(copy.deepcopy(config), copy.deepcopy(output), i)
         pool.close()
 
         for r in results:

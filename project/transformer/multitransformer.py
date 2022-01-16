@@ -80,6 +80,7 @@ class MultiTransformer(Transformer):
             for video in clips:
                 results.append(pool.apply_async(transformer_task, args=(video, data["use_cache"],
                                                 transformers["transformers"], multi_transformer_result)))
+                # transformer_task(video, data["use_cache"], transformers["transformers"], multi_transformer_result)
             pool.close()
 
             # To allow propagation of exceptions from child processes, otherwise they get missed.

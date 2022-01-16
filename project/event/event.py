@@ -1,8 +1,7 @@
 from enum import Enum
-from typing import Any, Union
+from typing import Any
 
-from moviepy.Clip import Clip
-from moviepy.video.VideoClip import ImageClip, VideoClip
+from video_generator.video import Video
 
 
 class EventType(Enum):
@@ -15,10 +14,10 @@ class EventType(Enum):
 class Event:
     event_type: EventType = None
     time: int = None
-    clip: Union[VideoClip, ImageClip] = None
+    clip: Video = None
     data = None  # To store any custom data required for processing
 
-    def __init__(self, event_type: EventType, time: int, clip: Union[VideoClip, ImageClip] = None, data: Any = None):
+    def __init__(self, event_type: EventType, time: int, clip: Video = None, data: Any = None):
         self.event_type = event_type
         self.time = time
         self.clip = clip

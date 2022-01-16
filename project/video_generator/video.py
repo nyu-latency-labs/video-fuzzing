@@ -20,8 +20,9 @@ class Video:
     crop_x1 = None
     crop_x2 = None
 
-    def __init__(self, filepath):
+    def __init__(self, filepath: str, object_type: str):
         self.filepath = filepath
+        self.object_type = object_type
 
     def set_start(self, start):
         self.start = start

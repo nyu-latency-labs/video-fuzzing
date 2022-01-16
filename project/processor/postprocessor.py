@@ -3,14 +3,15 @@ import uuid
 from moviepy.video.VideoClip import VideoClip
 
 from config.config import Config
-from pipeline.pipelineunit import PipelineUnit
+from processor.processor import Processor
 from utils.timer import timer
 
 
-class PostProcessor(PipelineUnit):
+class PostProcessor(Processor):
 
     def __init__(self, config: Config):
-        self.config = config
+        super().__init__(config)
+        self.name = "post_processor"
 
     @timer
     def apply(self, data) -> VideoClip:
@@ -24,7 +25,7 @@ class PostProcessor(PipelineUnit):
         if filename is None:
             filename = uuid.uuid4()
 
-        video.write_videofile(filename, self.config.fps, "mpeg4", audio=False, bitrate="1000k")
+        video.write_videofile(filename + ".mp4", self.config.fps, "mpeg4", audio=False, bitrate="1000k")
         data["status"] = True
         return video
 
