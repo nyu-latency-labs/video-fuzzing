@@ -1,4 +1,3 @@
-from __future__ import annotations
 from typing import Union
 
 import numpy as np
@@ -37,7 +36,7 @@ class RotateTransformer(Transformer):
             raise AssertionError("Invalid arguments passed into constructor")
 
     @classmethod
-    def create_from_config(cls, data) -> RotateTransformer:
+    def create_from_config(cls, data):
         values = {}
         if "angle" in data:
             values["angle"] = data["angle"]

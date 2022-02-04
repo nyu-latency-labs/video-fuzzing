@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import logging
 from random import randrange
 
@@ -121,5 +119,5 @@ class MovingCompositor(Compositor):
         return result
 
     @classmethod
-    def create_from_config(cls, config: Config) -> MovingCompositor:
+    def create_from_config(cls, config: Config):
         return MovingCompositor(config)

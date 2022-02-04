@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import Tuple
 
 
@@ -18,7 +16,7 @@ class Pair:
         return self.first, self.second
 
     @classmethod
-    def from_tuple(cls, tup) -> Pair:
+    def from_tuple(cls, tup):
         (first, second) = tup
         return Pair(first, second)
 

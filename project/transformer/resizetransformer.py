@@ -1,4 +1,3 @@
-from __future__ import annotations
 from enum import Enum
 
 from moviepy.editor import VideoClip
@@ -89,7 +88,7 @@ class ResizeTransformer(Transformer):
                 raise AssertionError("Height should be greater than 0")
 
     @classmethod
-    def create_from_config(cls, data) -> ResizeTransformer:
+    def create_from_config(cls, data):
         values = {}
         if "dimension" in data:
             values["dim"] = Pair(data["dimension"]["x"], data["dimension"]["x"])

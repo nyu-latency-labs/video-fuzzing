@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import logging
 import multiprocessing
 import uuid
@@ -115,5 +113,5 @@ class MultiTransformer(Transformer):
             raise AssertionError("No transformer left to apply.")
 
     @classmethod
-    def create_from_config(cls, data=None) -> MultiTransformer:
+    def create_from_config(cls, data=None):
         return MultiTransformer(data)

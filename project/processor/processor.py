@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from config.config import Config
 from pipeline.pipelineunit import PipelineUnit
 

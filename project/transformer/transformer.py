@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from pipeline.pipelineunit import PipelineUnit
 
 
@@ -19,7 +17,7 @@ class Transformer(PipelineUnit):
         raise NotImplementedError("Validate method not implemented.")
 
     @classmethod
-    def create_from_config(cls, data) -> Transformer:
+    def create_from_config(cls, data):
         return Transformer(data)
 
     def __str__(self):

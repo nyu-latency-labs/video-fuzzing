@@ -39,9 +39,8 @@
     "motorcycle"
   ],
   "object_distribution": {
-    "type": "normal",
-    "mean": 5,
-    "std": 2
+    "type": "linear",
+    "value": 5
   },
   "time_distribution": {
     "type": "normal",

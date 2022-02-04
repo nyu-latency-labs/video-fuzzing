@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import logging
 from typing import Optional
 
@@ -167,5 +165,5 @@ class GridCompositor(Compositor):
         return result
 
     @classmethod
-    def create_from_config(cls, config: Config) -> GridCompositor:
+    def create_from_config(cls, config: Config):
         return GridCompositor(config)

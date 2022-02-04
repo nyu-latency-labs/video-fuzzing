@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from config.config import Config
 from pipeline.pipelineunit import PipelineUnit
 
@@ -19,5 +17,5 @@ class Fuzzer(PipelineUnit):
         raise NotImplementedError("Validate method not implemented.")
 
     @classmethod
-    def create_from_config(cls, config: Config, data) -> Fuzzer:
+    def create_from_config(cls, config: Config, data):
         return Fuzzer(config, data)
