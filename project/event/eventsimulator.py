@@ -1,12 +1,13 @@
 import bisect
 import logging
 from typing import Optional
+from typing import List
 
 from event.event import EventType, Event
 
 
 class EventSimulator:
-    events: list[Event] = []
+    events: List[Event] = []
 
     def __init__(self):
         self.events = []

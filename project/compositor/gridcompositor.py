@@ -1,5 +1,6 @@
 import logging
 from typing import Optional
+from typing import List
 
 from moviepy.editor import VideoClip
 from moviepy.video.VideoClip import ImageClip
@@ -23,7 +24,7 @@ def get_closest_square(num: int) -> int:
     return val
 
 
-def calculate_max_videos(clips: list[Video]) -> int:
+def calculate_max_videos(clips: List[Video]) -> int:
     max_count = 0
     count = 0
     start = []
@@ -77,7 +78,7 @@ class GridCompositor(Compositor):
     def apply(self, data: dict):
         self.validate(data)
 
-        clips: list[Video] = data["clips"]
+        clips: List[Video] = data["clips"]
 
         # Create grid and put videos into positions
         # Calc max videos at a time
@@ -123,7 +124,7 @@ class GridCompositor(Compositor):
             return resize(clip, height=size.second)
         return resize(clip, width=size.first)
 
-    def position_clips(self, clips: list[Video]):
+    def position_clips(self, clips: List[Video]):
         simulator = EventSimulator()
         result = []
 

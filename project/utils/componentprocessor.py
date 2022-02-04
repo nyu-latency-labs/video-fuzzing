@@ -1,3 +1,5 @@
+from typing import List
+
 from compositor.compositor import Compositor
 from compositor.gridcompositor import GridCompositor
 from compositor.movingcompositor import MovingCompositor
@@ -15,7 +17,7 @@ class ComponentProcessor(metaclass=Singleton):
     def __init__(self, config):
         self.config = config
 
-    def process_transformer(self, tx: dict) -> list[Transformer]:
+    def process_transformer(self, tx: dict) -> List[Transformer]:
         transformers = []
 
         for element in tx:

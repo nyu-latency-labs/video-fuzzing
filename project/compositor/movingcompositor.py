@@ -1,5 +1,6 @@
 import logging
 from random import randrange
+from typing import List
 
 from moviepy.editor import VideoClip
 from moviepy.video.VideoClip import ImageClip
@@ -20,7 +21,7 @@ def get_closest_square(num: int) -> int:
     return val
 
 
-def calculate_max_videos(clips: list[Video]) -> int:
+def calculate_max_videos(clips: List[Video]) -> int:
     max_count = 0
     count = 0
     start = []
@@ -61,7 +62,7 @@ class MovingCompositor(Compositor):
     def apply(self, data: dict):
         self.validate(data)
 
-        clips: list[Video] = data["clips"]
+        clips: List[Video] = data["clips"]
 
         max_vids = calculate_max_videos(clips)
         sqrt = get_closest_square(max_vids)
@@ -97,7 +98,7 @@ class MovingCompositor(Compositor):
             return resize(clip, height=size.second)
         return resize(clip, width=size.first)
 
-    def position_clips(self, clips: list[Video]):
+    def position_clips(self, clips: List[Video]):
         result = []
 
         # Divide into 4 quadrants and move around clip

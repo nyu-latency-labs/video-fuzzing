@@ -1,5 +1,6 @@
 import logging
 from math import ceil
+from typing import List
 
 from config.config import Config
 from distribution_generator.dgfactory import DGFactory
@@ -12,7 +13,7 @@ from video_generator.video import Video
 from video_generator.videogenerator import VideoGenerator
 
 
-def generate_distribution(distribution_generator: DistributionGenerator, count: int) -> list[int]:
+def generate_distribution(distribution_generator: DistributionGenerator, count: int) -> List[int]:
     distribution = []
     for i in range(count):
         k = distribution_generator.next()
@@ -51,7 +52,7 @@ class PreProcessor(Processor):
 
         end_simulation_event = Event(EventType.END_SIMULATION, self.config.duration)
         simulator.add(end_simulation_event)
-        final_clips: list[Video] = []
+        final_clips: List[Video] = []
 
         # Event Simulation
         # Do not worry about trailing clips. They will be cut off at post-processing step
@@ -89,7 +90,7 @@ class PreProcessor(Processor):
 
         logging.debug(f"Removing video with start time: {event.clip.start} and set end time to {event.clip.end}")
 
-    def add_video(self, current_event: Event, final_clips: list[Video], object_type_generator: DistributionGenerator,
+    def add_video(self, current_event: Event, final_clips: List[Video], object_type_generator: DistributionGenerator,
                   simulator: EventSimulator, time_distribution_generator: DistributionGenerator):
         video = self.get_video(object_type_generator.next(), int(time_distribution_generator.next()), current_event.time)
         final_clips.append(video)

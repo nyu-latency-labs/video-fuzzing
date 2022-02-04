@@ -1,4 +1,5 @@
 from typing import Optional
+from typing import List, Dict
 
 from caching.cacheitem import CacheItem
 from transformer.transformer import Transformer
@@ -6,7 +7,7 @@ from utils.singleton import Singleton
 
 
 class VideoCache(metaclass=Singleton):
-    data: dict[str, list[CacheItem]] = {}
+    data: Dict[str, List[CacheItem]] = {}
 
     def add(self, item: CacheItem):
         if item.original_filename not in self.data.keys():
@@ -14,7 +15,7 @@ class VideoCache(metaclass=Singleton):
         else:
             self.data[item.original_filename].append(item)
 
-    def get(self, filename: str, transformers: list[Transformer]) -> Optional[CacheItem]:
+    def get(self, filename: str, transformers: List[Transformer]) -> Optional[CacheItem]:
         if filename not in self.data.keys():
             return None
 

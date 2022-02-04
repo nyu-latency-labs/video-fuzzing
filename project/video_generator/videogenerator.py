@@ -1,7 +1,7 @@
 import logging
 import os
 from random import choice
-from typing import Tuple, Optional
+from typing import Tuple, List, Dict
 
 from utils.singleton import Singleton
 from video_generator.video import Video
@@ -10,7 +10,7 @@ VIDEO_ROOT = "../resources"
 JSON_PATH = "config.json"
 
 
-def discover_media(root: str) -> Tuple[list[str], dict[str, list[Video]]]:
+def discover_media(root: str) -> Tuple[List[str], Dict[str, List[Video]]]:
     all_media = {}
     obj_types = []
     for dirs in os.listdir(root):
@@ -34,8 +34,8 @@ def discover_media(root: str) -> Tuple[list[str], dict[str, list[Video]]]:
 
 class VideoGenerator(metaclass=Singleton):
     root: str = VIDEO_ROOT
-    videos: dict[str, list[Video]] = None
-    object_types: list[str] = None
+    videos: Dict[str, List[Video]] = None
+    object_types: List[str] = None
 
     def __init__(self, root: str):
         self.root = root

@@ -1,7 +1,7 @@
 import logging
 import multiprocessing
 import uuid
-from typing import Optional
+from typing import Optional, List
 
 from moviepy.video.VideoClip import ImageClip
 
@@ -16,7 +16,7 @@ video_cache = VideoCache()
 
 
 @timer
-def transformer_task(video: Video, use_cache: bool, tx_list: list[Transformer], out_list: list[Video]):
+def transformer_task(video: Video, use_cache: bool, tx_list: List[Transformer], out_list: List[Video]):
     cache_item: Optional[CacheItem] = None
 
     if use_cache:
