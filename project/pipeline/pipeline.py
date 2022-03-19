@@ -2,29 +2,29 @@ import copy
 import logging
 import random
 
+from component_generator.compositorgenerator import CompositorGenerator
+from component_generator.fuzzergenerator import FuzzerGenerator
 from config.config import Config
 from processor.metadataprocessor import MetadataProcessor
 from processor.postprocessor import PostProcessor
 from processor.preprocessor import PreProcessor
 from transformer.multitransformer import MultiTransformer
-from utils.componentprocessor import ComponentProcessor
+from component_generator.componentgenerator import ComponentGenerator
 from utils.multiprocessinglog import worker_init, logger_init
 from utils.nondaemonicprocess import NestablePool
 from utils.timer import timer
 
 
 @timer
-def pipeline_task(config: Config, data: dict, n: int):
-    component_processor = ComponentProcessor(config)
-    compositor = component_processor.process_compositor(config.data["compositor"])
+def pipeline_task(config: Config, data: dict):
+    compositor_generator = CompositorGenerator(config)
+    compositor = compositor_generator.process(data["compositor"])
     multi_transformer = MultiTransformer(config)
     preprocessor = PreProcessor(config)
     postprocessor = PostProcessor(config)
-    metaprocessor = MetadataProcessor(config)
+    meta_processor = MetadataProcessor(config)
 
-    data["filename"] = data["filename_prefix"] + "_" + str(n)
-
-    processing_pipeline = [preprocessor, metaprocessor, multi_transformer, multi_transformer, compositor, postprocessor]
+    processing_pipeline = [preprocessor, meta_processor, multi_transformer, compositor, postprocessor]
 
     for processor in processing_pipeline:
         data = processor.apply(data)
@@ -39,21 +39,21 @@ class Pipeline:
         config = Config(filename)
         self.config = config
 
-        component_processor = ComponentProcessor(config)
+        fuzzer_processor = FuzzerGenerator(config)
 
-        transformers = component_processor.process_transformer(config.data["transformers"])
-        fuzzer = component_processor.process_fuzzer(config.data["fuzzer"])
+        # transformers = component_processor.process_transformer(config.data.get("transformers", []))
+        fuzzer = fuzzer_processor.process(config.data["fuzzer"])
 
         data = {
             "max_cores": self.config.max_cores,
             "use_cache": self.config.use_cache,
-            "transformers": [
-                {
-                    "applied": False,
-                    "transformers": transformers,
-                    "type": "global"
-                }
-            ]
+            # "transformers": [
+            #     {
+            #         "applied": False,
+            #         "transformers": transformers,
+            #         "type": "global"
+            #     }
+            # ]
         }
 
         fuzzer_output = fuzzer.apply(data)
@@ -95,9 +95,8 @@ class Pipeline:
 
         results = []
         for output in fuzzer_output:
-            for i in range(config.video_copies):
-                results.append(pool.apply_async(pipeline_task, (copy.deepcopy(config), copy.deepcopy(output), i,)))
-                # pipeline_task(copy.deepcopy(config), copy.deepcopy(output), i)
+            results.append(pool.apply_async(pipeline_task, (copy.deepcopy(config), copy.deepcopy(output),)))
+            # pipeline_task(copy.deepcopy(config), copy.deepcopy(output))
         pool.close()
 
         for r in results:

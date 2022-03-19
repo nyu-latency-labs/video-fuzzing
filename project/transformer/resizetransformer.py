@@ -1,3 +1,4 @@
+import random
 from enum import Enum
 
 from moviepy.editor import VideoClip
@@ -100,3 +101,9 @@ class ResizeTransformer(Transformer):
             values["height"] = data["height"]
 
         return ResizeTransformer(**values)
+
+    @classmethod
+    def get_random(cls):
+        ratio = random.randint(1, 200) / 100
+        data = {"type": "resize_transformer", "ratio": ratio}
+        return data

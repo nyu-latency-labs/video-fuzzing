@@ -35,13 +35,13 @@ class PreProcessor(Processor):
     # Generate videos as per distributions (class, num, time)
     @timer
     def apply(self, data: dict) -> dict:
-        object_distribution = DGFactory.get_distribution_generator(data["object_distribution"])
-        object_distribution_generator = generate_distribution(object_distribution,
+        object_distribution_generator = generate_distribution(data["object_distribution"],
                                                               ceil(self.config.duration / self.config.step_size))
 
-        time_distribution_generator = DGFactory.get_distribution_generator(data["time_distribution"], self.config.duration)
+        data["fix_value"] = self.config.duration
+        time_distribution_generator = data["time_distribution"]
 
-        object_type_generator = DGFactory.get_distribution_generator(data["object_type_distribution"])
+        object_type_generator = data["object_type_distribution"]
 
         simulator = EventSimulator()
 

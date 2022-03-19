@@ -2,6 +2,7 @@ import json
 import multiprocessing
 
 from utils.pair import Pair
+from pathlib import Path
 
 
 class Config:
@@ -16,9 +17,10 @@ class Config:
 
         object_class_distribution = {
             "type": "choice",
-            "value": self.data["object_class"]
+            "value": self.data.get("object_class", None)
         }
 
+        self.filename: str = str(Path(filename).with_suffix(''))
         self.duration: int = int(self.data["duration"])
         self.fps: int = int(self.data["fps"])
         self.step_size: int = int(self.data["step_size"])
@@ -31,12 +33,11 @@ class Config:
         self.use_cache: bool = self.data["use_cache"]
 
         self.object_class_distribution = object_class_distribution
-        self.object_distribution = self.data["object_distribution"]
-        self.time_distribution = self.data["time_distribution"]
+        self.object_distribution = self.data.get("object_distribution", None)
+        self.time_distribution = self.data.get("time_distribution", None)
 
     def validate(self):
-        params = {"duration", "fps", "media_root", "max_cores", "object_distribution", "object_class",
-                  "time_distribution", "use_cache", "step_size", "dimension", "num_video_copies"}
+        params = {"duration", "fps", "media_root", "max_cores", "use_cache", "step_size", "dimension", "num_video_copies"}
 
         if not params <= self.data.keys():
             raise AssertionError(f"Required params missing from config file. Required params are: {params}")

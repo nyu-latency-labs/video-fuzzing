@@ -1,6 +1,7 @@
 from typing import Union
 
 import numpy as np
+import random
 from moviepy.video.VideoClip import ImageClip, VideoClip
 from moviepy.video.fx.rotate import rotate as video_rotate
 
@@ -41,6 +42,12 @@ class RotateTransformer(Transformer):
         if "angle" in data:
             values["angle"] = data["angle"]
         return RotateTransformer(**values)
+
+    @classmethod
+    def get_random(cls):
+        angle = random.randint(0, 366)
+        data = {"type": "rotate_transformer", "angle": angle}
+        return data
 
 
 try:
@@ -85,3 +92,5 @@ def rotate(clip, angle, unit='deg', resample="bicubic", expand=True):
     clip.make_frame = lambda t: arr
     clip.img = arr
     return clip
+
+

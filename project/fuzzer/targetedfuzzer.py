@@ -1,12 +1,14 @@
 import copy
 import logging
 
+from component_generator.transformergenerator import TransformerGenerator
 from config.config import Config
+from distribution_generator.dgfactory import DGFactory
 from fuzzer.fuzzer import Fuzzer
 from utils.timer import timer
 
 
-class ExperimentFuzzer(Fuzzer):
+class TargetedFuzzer(Fuzzer):
 
     def __init__(self, config: Config, data=None):
         super().__init__(config, data)
@@ -26,17 +28,25 @@ class ExperimentFuzzer(Fuzzer):
 
         for tx in self.transformers:
             _data = copy.deepcopy(data)
+            transformer_generator = TransformerGenerator(self.config)
+            transformers = transformer_generator.process([tx])
+
             local_transforms = {
                 "applied": False,
-                "transformers": [tx],
+                "transformers": transformers,
                 "type": "local"
             }
+
+            time_distribution_input = self.config.time_distribution
+            time_distribution_input["fix_time"] = self.config.duration
+
             obj = {
-                "object_distribution": self.config.object_distribution,
-                "time_distribution": self.config.time_distribution,
-                "object_type_distribution": self.config.object_class_distribution,
-                "filename_prefix": self.name + "_" + str(tx),
+                "object_distribution": DGFactory.get_distribution_generator(self.config.object_distribution),
+                "time_distribution": DGFactory.get_distribution_generator(time_distribution_input),
+                "object_type_distribution": DGFactory.get_distribution_generator(self.config.object_class_distribution),
+                "filename": self.name + "_" + str(tx),
                 "max_tx_cores": quotient_cores,
+                "compositor": self.config.data["compositor"]
             }
 
             logging.debug(f"Setting max tx cores as {quotient_cores}")
@@ -44,7 +54,10 @@ class ExperimentFuzzer(Fuzzer):
             new_obj = {**_data, **obj}
             new_obj["transformers"].append(local_transforms)
 
-            new_data.append(new_obj)
+            for i in range(self.config.video_copies):
+                cpy = copy.deepcopy(new_obj)
+                cpy["filename"] = cpy["filename"] + "_" + str(i + 1)
+                new_data.append(cpy)
 
         return new_data
 
@@ -53,4 +66,4 @@ class ExperimentFuzzer(Fuzzer):
 
     @classmethod
     def create_from_config(cls, config: Config, data):
-        return ExperimentFuzzer(config, data)
+        return TargetedFuzzer(config, data)

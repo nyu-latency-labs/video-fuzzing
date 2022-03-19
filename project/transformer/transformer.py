@@ -20,5 +20,9 @@ class Transformer(PipelineUnit):
     def create_from_config(cls, data):
         return Transformer(data)
 
+    @classmethod
+    def get_random(cls):
+        raise NotImplementedError("GetRandomInstance method not implemented.")
+
     def __str__(self):
         raise NotImplementedError("Transformer should implement __str__ method to enable caching")

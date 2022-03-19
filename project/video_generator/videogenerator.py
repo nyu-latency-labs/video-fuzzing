@@ -55,3 +55,6 @@ class VideoGenerator(metaclass=Singleton):
 
         logging.debug("Generated video with start time: %s and duration: %s", candidate.start, candidate.duration)
         return candidate
+
+    def get_object_types(self):
+        return self.object_types

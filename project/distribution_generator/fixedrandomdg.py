@@ -8,10 +8,10 @@ class FixedRandomDG(DistributionGenerator):
     random_state = None
     fixed_fn = None
 
-    def __init__(self, ds: dict, time: int, fn: Callable = None):
+    def __init__(self, ds: dict, fn: Callable = None):
         super().__init__(ds)
 
-        self.fixed_fn = lambda: time
+        self.fixed_fn = lambda: ds["fix_value"]
 
         self.fn = fn if fn is not None else self.process_distribution()
 

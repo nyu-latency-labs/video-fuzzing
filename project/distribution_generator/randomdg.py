@@ -12,8 +12,8 @@ class RandomDG(DistributionGenerator):
 
         self.fn = fn if fn is not None else self.process_distribution()
 
-        random.seed(10)
-        # random.seed(random.randint(1, 100))
+        # random.seed(10)
+        random.seed(random.randint(1, 100))
 
         self.random_state = random.getstate()
 

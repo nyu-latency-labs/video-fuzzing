@@ -1,3 +1,4 @@
+import logging
 import random
 from typing import Callable
 
@@ -15,13 +16,15 @@ class DistributionGenerator:
 
     def process_distribution(self) -> Callable:
         ds_type = self.ds["type"]
-
+        logging.debug(f"{self.ds}")
         if ds_type == "normal":
             return lambda: random.gauss(self.ds["mean"], self.ds["std"])
         elif ds_type == "linear":
             return lambda: self.ds["value"]
         elif ds_type == "choice":
             return lambda: random.choice(self.ds["value"])
+        else:
+            raise NotImplementedError(f"{ds_type} is not implemented")
 
     def __iter__(self):
         return self
@@ -31,9 +34,11 @@ class DistributionGenerator:
 
     def __getstate__(self):
         state = self.__dict__.copy()
+        # if 'fn' in state:
         del state['fn']
+
         return state
 
     def __setstate__(self, state):
         self.__dict__.update(state)
-        self.process_distribution()
+        self.fn = self.process_distribution()

@@ -115,3 +115,8 @@ class MultiTransformer(Transformer):
     @classmethod
     def create_from_config(cls, data=None):
         return MultiTransformer(data)
+
+    @classmethod
+    def get_random(cls):
+        raise NotImplementedError("GetRandomInstance method not applicable.")
+
