@@ -77,7 +77,7 @@ class MovingCompositor(Compositor):
         block_size = Pair(int(self.config.frame_size.first / self.grid.first),
                           int(self.config.frame_size.second / self.grid.second))
         for clip in positioned_clips:
-            final_clips.extend(self.resize_clip(clip, block_size))
+            final_clips.append(self.resize_clip(clip, block_size))
 
         logging.debug("Positioned %s clips", len(final_clips))
 

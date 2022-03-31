@@ -16,7 +16,7 @@ class DistributionGenerator:
 
     def process_distribution(self) -> Callable:
         ds_type = self.ds["type"]
-        logging.debug(f"{self.ds}")
+
         if ds_type == "normal":
             return lambda: random.gauss(self.ds["mean"], self.ds["std"])
         elif ds_type == "linear":
@@ -34,7 +34,6 @@ class DistributionGenerator:
 
     def __getstate__(self):
         state = self.__dict__.copy()
-        # if 'fn' in state:
         del state['fn']
 
         return state

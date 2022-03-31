@@ -9,7 +9,6 @@ from processor.metadataprocessor import MetadataProcessor
 from processor.postprocessor import PostProcessor
 from processor.preprocessor import PreProcessor
 from transformer.multitransformer import MultiTransformer
-from component_generator.componentgenerator import ComponentGenerator
 from utils.multiprocessinglog import worker_init, logger_init
 from utils.nondaemonicprocess import NestablePool
 from utils.timer import timer
@@ -47,13 +46,6 @@ class Pipeline:
         data = {
             "max_cores": self.config.max_cores,
             "use_cache": self.config.use_cache,
-            # "transformers": [
-            #     {
-            #         "applied": False,
-            #         "transformers": transformers,
-            #         "type": "global"
-            #     }
-            # ]
         }
 
         fuzzer_output = fuzzer.apply(data)

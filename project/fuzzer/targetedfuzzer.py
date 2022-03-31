@@ -12,28 +12,30 @@ class TargetedFuzzer(Fuzzer):
 
     def __init__(self, config: Config, data=None):
         super().__init__(config, data)
-        self.name = "experiment_fuzzer"
+        self.name = "targeted_fuzzer"
 
     @timer
     def apply(self, data):
         # Send list of data to be sent down the pipeline
         new_data = []
 
+        transformer_generator = TransformerGenerator(self.config)
+        self.transformers = transformer_generator.process(self.config.data.get("transformers", []))
+
         # distribute remaining cores between transformers
         # TODO: Add remaining cores
-        quotient_cores = int(self.config.max_cores / (self.config.video_copies * len(self.transformers)))
+        quotient_cores = int(self.config.max_cores / self.config.video_copies)
         quotient_cores = 1 if quotient_cores < 0 else quotient_cores
 
-        self.config.pipeline_cores = min(self.config.max_cores, (self.config.video_copies * len(self.transformers)))
+        self.config.pipeline_cores = min(self.config.max_cores, self.config.video_copies)
 
-        for tx in self.transformers:
+        for i in range(self.config.video_copies):
+
             _data = copy.deepcopy(data)
-            transformer_generator = TransformerGenerator(self.config)
-            transformers = transformer_generator.process([tx])
 
             local_transforms = {
                 "applied": False,
-                "transformers": transformers,
+                "transformers": self.transformers,
                 "type": "local"
             }
 
@@ -44,7 +46,7 @@ class TargetedFuzzer(Fuzzer):
                 "object_distribution": DGFactory.get_distribution_generator(self.config.object_distribution),
                 "time_distribution": DGFactory.get_distribution_generator(time_distribution_input),
                 "object_type_distribution": DGFactory.get_distribution_generator(self.config.object_class_distribution),
-                "filename": self.name + "_" + str(tx),
+                "filename": self.name + "_" + str(i),
                 "max_tx_cores": quotient_cores,
                 "compositor": self.config.data["compositor"]
             }
@@ -52,12 +54,8 @@ class TargetedFuzzer(Fuzzer):
             logging.debug(f"Setting max tx cores as {quotient_cores}")
 
             new_obj = {**_data, **obj}
-            new_obj["transformers"].append(local_transforms)
-
-            for i in range(self.config.video_copies):
-                cpy = copy.deepcopy(new_obj)
-                cpy["filename"] = cpy["filename"] + "_" + str(i + 1)
-                new_data.append(cpy)
+            new_obj["transformers"] = [local_transforms]
+            new_data.append(new_obj)
 
         return new_data
 
