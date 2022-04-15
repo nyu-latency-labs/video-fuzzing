@@ -46,7 +46,7 @@ class TargetedFuzzer(Fuzzer):
                 "object_distribution": DGFactory.get_distribution_generator(self.config.object_distribution),
                 "time_distribution": DGFactory.get_distribution_generator(time_distribution_input),
                 "object_type_distribution": DGFactory.get_distribution_generator(self.config.object_class_distribution),
-                "filename": self.name + "_" + str(i),
+                "filename": self.config.filename + "_" + str(i),
                 "max_tx_cores": quotient_cores,
                 "compositor": self.config.data["compositor"]
             }

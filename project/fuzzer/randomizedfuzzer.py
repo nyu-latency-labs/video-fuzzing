@@ -84,7 +84,7 @@ class RandomizedFuzzer(Fuzzer):
                 "object_distribution": object_distribution,
                 "time_distribution": time_distribution,
                 "object_type_distribution": object_class_distribution,
-                "filename": self.name + "_" + str(i),
+                "filename": self.config.filename + "_" + str(i),
                 "max_tx_cores": quotient_cores,
                 "compositor": compositor
             }
