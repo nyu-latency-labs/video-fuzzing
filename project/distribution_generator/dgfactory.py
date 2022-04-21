@@ -1,10 +1,13 @@
 import logging
 from enum import IntEnum
 import random
+from typing import Union
 
 from distribution_generator.distributiongenerator import DistributionGenerator
 from distribution_generator.fixedrandomdg import FixedRandomDG
 from distribution_generator.randomdg import RandomDG
+from distribution_generator.stateful_generator.alpine import Alpine
+from distribution_generator.stateful_generator.exponential import Exponential
 
 
 class DistributionType(IntEnum):
@@ -15,7 +18,7 @@ class DistributionType(IntEnum):
 class DGFactory:
 
     @classmethod
-    def get_distribution_generator(cls, data: dict) -> DistributionGenerator:
+    def get_distribution_generator(cls, data: dict) -> Union[DistributionGenerator, Exponential, Alpine]:
         ds_type = data["type"]
 
         if "fixed_objects" in data:
@@ -23,6 +26,10 @@ class DGFactory:
         elif ds_type == "random":
             data = get_random_distribution(data["max_value"])
             return RandomDG(data)
+        elif ds_type == "exponential":
+            return Exponential(data)
+        elif ds_type == "alpine":
+            return Alpine(data)
         else:
             return RandomDG(data)
 

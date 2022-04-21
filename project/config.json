@@ -29,7 +29,7 @@
       }
     ]
   },
-  "num_video_copies": 3,
+  "num_video_copies": 1,
   "compositor": {
     "type": "grid_compositor"
   },
@@ -39,8 +39,8 @@
     "motorcycle"
   ],
   "object_distribution": {
-    "type": "linear",
-    "value": 5
+    "type": "alpine",
+    "multiplier": 3.5
   },
   "time_distribution": {
     "type": "normal",
