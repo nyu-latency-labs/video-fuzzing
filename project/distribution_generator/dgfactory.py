@@ -13,6 +13,8 @@ from distribution_generator.stateful_generator.exponential import Exponential
 class DistributionType(IntEnum):
     NORMAL = 0
     LINEAR = 1
+    ALPINE = 1
+    EXPONENTIAL = 1
 
 
 class DGFactory:
@@ -41,10 +43,14 @@ def get_random_distribution(max_value) -> dict:
     # TODO Better formula?
     if ds_type == 0:
         mean = random.randint(0, max_value)
-        std = random.randint(0, int((max_value-mean)/2))
+        std = random.randint(0, int((max_value - mean) / 2))
         result = {"type": "normal", "mean": mean, "std": std}
     elif ds_type == 1:
         result = {"type": "linear", "value": random.randint(0, max_value)}
+    elif ds_type == 2:
+        result = {"type": "alpine", "multiplier": random.randint(1, max_value)}
+    elif ds_type == 3:
+        result = {"type": "exponential", "lambda": random.randint(1, max_value)}
 
     logging.debug(f"Random distribution with value {result} created.")
     return result
