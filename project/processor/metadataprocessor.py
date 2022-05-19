@@ -22,8 +22,10 @@ class MetadataProcessor(Processor):
             for i in range(clip.start, clip.end + 1):
                 data["objects"][i].append(clip.object_type)
 
+        output_json = {"object_distribution": data["objects"]}
+
         with open(data["filename"] + ".json", 'w') as f:
-            json.dump(data["objects"], f)
+            json.dump(output_json, f)
 
         logging.debug(f"Saving metadata for video as {data['filename'] + '.json'}")
         return data

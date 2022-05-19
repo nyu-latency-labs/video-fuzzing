@@ -18,7 +18,7 @@
     }
   ],
   "fuzzer": {
-    "type": "targeted_fuzzer",
+    "type": "randomized_fuzzer",
     "transformers": [
       {
         "type": "resize_transformer",
@@ -40,7 +40,8 @@
   ],
   "object_distribution": {
     "type": "alpine",
-    "multiplier": 3.5
+    "multiplier": 3.5,
+    "downscale": 5
   },
   "time_distribution": {
     "type": "normal",

@@ -48,7 +48,7 @@ def get_random_distribution(max_value) -> dict:
     elif ds_type == 1:
         result = {"type": "linear", "value": random.randint(0, max_value)}
     elif ds_type == 2:
-        result = {"type": "alpine", "multiplier": random.randint(1, max_value)}
+        result = {"type": "alpine", "multiplier": random.randint(1, max_value), "downscale": random.randint(1, 10)}
     elif ds_type == 3:
         result = {"type": "exponential", "lambda": random.randint(1, max_value)}
 

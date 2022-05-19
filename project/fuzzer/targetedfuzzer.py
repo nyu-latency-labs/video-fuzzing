@@ -53,8 +53,7 @@ class TargetedFuzzer(Fuzzer):
 
             logging.debug(f"Setting max tx cores as {quotient_cores}")
 
-            new_obj = {**_data, **obj}
-            new_obj["transformers"] = [local_transforms]
+            new_obj = {**_data, **obj, "transformers": [local_transforms]}
             new_data.append(new_obj)
 
         return new_data
