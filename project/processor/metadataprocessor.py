@@ -16,10 +16,10 @@ class MetadataProcessor(Processor):
     def apply(self, data: dict) -> dict:
         self.validate(data)
 
-        data["objects"] = [[] for i in range(self.config.duration + 1)]
+        data["objects"] = [[] for i in range(self.config.duration)]
 
         for clip in data["clips"]:
-            for i in range(clip.start, clip.end + 1):
+            for i in range(clip.start, clip.end):
                 data["objects"][i].append(clip.object_type)
 
         output_json = {"object_distribution": data["objects"]}
