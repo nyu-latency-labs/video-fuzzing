@@ -42,11 +42,11 @@ def get_random_distribution(max_value) -> dict:
 
     # TODO Better formula?
     if ds_type == 0:
-        mean = random.randint(0, max_value)
+        mean = random.randint(1, max_value)
         std = random.randint(0, int((max_value - mean) / 2))
         result = {"type": "normal", "mean": mean, "std": std}
     elif ds_type == 1:
-        result = {"type": "linear", "value": random.randint(0, max_value)}
+        result = {"type": "linear", "value": random.randint(1, max_value)}
     elif ds_type == 2:
         result = {"type": "alpine", "multiplier": random.randint(1, max_value), "downscale": random.randint(1, 10)}
     elif ds_type == 3:
