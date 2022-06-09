@@ -1,0 +1,44 @@
+{
+  "fps": 30,
+  "duration": 50,
+  "allow_overlap": false,
+  "step_size": 2,
+  "media_root": "../resources",
+  "background_path": "../resources/street.jpg",
+  "max_cores": 8,
+  "use_cache": true,
+  "dimension": {
+    "x": 400,
+    "y": 400
+  },
+  "transformers": [
+    {
+      "type": "resize_transformer",
+      "ratio": 0.9
+    }
+  ],
+  "fuzzer": {
+    "type": "targeted_fuzzer",
+    "transformers": [
+      {
+        "type": "rotate_transformer",
+        "angle": 10
+      }
+    ]
+  },
+  "num_video_copies": 1,
+  "compositor": {
+    "type": "grid_compositor"
+  },
+  "object_class": [
+    "car", "person", "motorbike", "bus","truck", "bicycle"
+  ],
+  "object_distribution": {
+    "type": "linear",
+    "value": 4
+  },
+  "time_distribution": {
+    "type": "linear",
+    "value": 5
+  }
+}
