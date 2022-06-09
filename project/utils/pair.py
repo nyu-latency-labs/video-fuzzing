@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Union
 
 
 class Pair:
@@ -8,7 +8,7 @@ class Pair:
     first = 0
     second = 0
 
-    def __init__(self, first: int, second: int):
+    def __init__(self, first: Union[int, float], second: Union[int, float]):
         self.first = first
         self.second = second
 

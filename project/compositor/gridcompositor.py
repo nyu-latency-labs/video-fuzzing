@@ -99,8 +99,8 @@ class GridCompositor(Compositor):
         if self.config.data["allow_overlap"]:
             final_clips.extend(positioned_clips)
         else:
-            block_size = Pair(int(self.config.frame_size.first / self.grid.first),
-                              int(self.config.frame_size.second / self.grid.second))
+            block_size = Pair((self.config.frame_size.first / self.grid.first),
+                              (self.config.frame_size.second / self.grid.second))
             for clip in positioned_clips:
                 final_clips.append(self.resize_clip(clip, block_size))
 
@@ -121,8 +121,8 @@ class GridCompositor(Compositor):
     def resize_clip(self, clip: VideoClip, size: Pair):
         x, y = clip.size
         if x > y:
-            return resize(clip, height=size.second)
-        return resize(clip, width=size.first)
+            return resize(clip, width=size.first)
+        return resize(clip, height=size.second)
 
     def position_clips(self, clips: List[Video]):
         simulator = EventSimulator()
