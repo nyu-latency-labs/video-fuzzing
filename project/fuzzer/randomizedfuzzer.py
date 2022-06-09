@@ -45,31 +45,28 @@ class RandomizedFuzzer(Fuzzer):
             total_object_types = self.video_generator.get_object_types()
             n_objects = random.randint(1, len(total_object_types) - 1)
             object_classes = random.sample(self.video_generator.get_object_types(), n_objects)
-            object_class_distribution_input = {
-                "type": "choice",
-                "value": object_classes
-            }
+            object_class_distribution_input = self.config.object_class_distribution or {"type": "choice", "value": object_classes}
             object_class_distribution = DGFactory.get_distribution_generator(object_class_distribution_input)
             logging.debug(f"Object class distribution type {object_class_distribution_input} used.")
 
             # Set time distribution
-            time_dist_map = {"type": "random", "max_value": 10}
+            time_dist_map = self.config.time_distribution or {"type": "random", "max_value": 10}
             time_distribution = DGFactory.get_distribution_generator(time_dist_map)
             logging.debug(f"Time distribution type {time_dist_map} used.")
 
             # Set object distribution
-            obj_dist_map = {"type": "random", "max_value": 36}
+            obj_dist_map = self.config.object_distribution or {"type": "random", "max_value": 16}
             object_distribution = DGFactory.get_distribution_generator(obj_dist_map)
             logging.debug(f"Object distribution type {obj_dist_map} used.")
 
             # Set transformers
-            transformer_list = self.transformer_picker()
+            transformer_list = self.config.data.get("transformers") or self.transformer_picker()
             transformer_generator = TransformerGenerator(self.config)
             transformers = transformer_generator.process(transformer_list)
             logging.debug(f"Transformers of type {[str(tx) for tx in transformers]} picked.")
 
             # Set compositor
-            compositor = self.compositor_picker()
+            compositor = self.config.data["compositor"] or self.compositor_picker()
             logging.debug(f"Compositor of type {str(compositor)} picked.")
 
             _data = copy.deepcopy(data)
@@ -91,8 +88,7 @@ class RandomizedFuzzer(Fuzzer):
 
             logging.debug(f"Setting max tx cores as {quotient_cores}")
 
-            new_obj = {**_data, **obj}
-            new_obj["transformers"] = [local_transforms]
+            new_obj = {**_data, **obj, "transformers": [local_transforms]}
             new_data.append(new_obj)
 
         return new_data
@@ -109,6 +105,7 @@ class RandomizedFuzzer(Fuzzer):
         picked_tx = random.sample([i for i in range(len(TransformerTypes))], total_transformers)
 
         tx = []
+        # tx.append({"type": "rotate_transformer", "angle": -45})
         for i in picked_tx:
             if i == 0:
                 tx.append(ResizeTransformer.get_random())

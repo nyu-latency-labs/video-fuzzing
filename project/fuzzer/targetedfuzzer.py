@@ -39,12 +39,9 @@ class TargetedFuzzer(Fuzzer):
                 "type": "local"
             }
 
-            time_distribution_input = self.config.time_distribution
-            time_distribution_input["fix_time"] = self.config.duration
-
             obj = {
                 "object_distribution": DGFactory.get_distribution_generator(self.config.object_distribution),
-                "time_distribution": DGFactory.get_distribution_generator(time_distribution_input),
+                "time_distribution": DGFactory.get_distribution_generator(self.config.time_distribution),
                 "object_type_distribution": DGFactory.get_distribution_generator(self.config.object_class_distribution),
                 "filename": self.config.filename + "_" + str(i),
                 "max_tx_cores": quotient_cores,
