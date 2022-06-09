@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 
 from config.config import Config
 from processor.processor import Processor
@@ -24,7 +25,8 @@ class MetadataProcessor(Processor):
 
         output_json = {"object_distribution": data["objects"]}
 
-        with open(data["filename"] + ".json", 'w') as f:
+        os.makedirs("metadata/", exist_ok=True)
+        with open("metadata/" + data["filename"] + ".json", 'w') as f:
             json.dump(output_json, f)
 
         logging.debug(f"Saving metadata for video as {data['filename'] + '.json'}")

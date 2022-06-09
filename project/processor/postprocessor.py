@@ -1,4 +1,5 @@
 import uuid
+import os
 
 from moviepy.video.VideoClip import VideoClip
 
@@ -25,7 +26,8 @@ class PostProcessor(Processor):
         if filename is None:
             filename = uuid.uuid4()
 
-        video.write_videofile(filename + ".mp4", self.config.fps, "mpeg4", audio=False, bitrate="1000k")
+        os.makedirs("media/", exist_ok=True)
+        video.write_videofile("media/" + filename + ".mp4", self.config.fps, "mpeg4", audio=False, bitrate="1000k")
         data["status"] = True
         return video
 
