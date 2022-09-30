@@ -45,7 +45,7 @@ class RandomizedFuzzer(Fuzzer):
             total_object_types = self.video_generator.get_object_types()
             n_objects = random.randint(1, len(total_object_types) - 1)
             object_classes = random.sample(self.video_generator.get_object_types(), n_objects)
-            object_class_distribution_input = self.config.object_class_distribution or {"type": "choice", "value": object_classes}
+            object_class_distribution_input = {"type": "choice", "value": self.config.object_class_distribution["value"] or object_classes}
             object_class_distribution = DGFactory.get_distribution_generator(object_class_distribution_input)
             logging.debug(f"Object class distribution type {object_class_distribution_input} used.")
 
@@ -66,7 +66,7 @@ class RandomizedFuzzer(Fuzzer):
             logging.debug(f"Transformers of type {[str(tx) for tx in transformers]} picked.")
 
             # Set compositor
-            compositor = self.config.data["compositor"] or self.compositor_picker()
+            compositor = self.config.data.get("compositor") or self.compositor_picker()
             logging.debug(f"Compositor of type {str(compositor)} picked.")
 
             _data = copy.deepcopy(data)

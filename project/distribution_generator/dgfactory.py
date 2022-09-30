@@ -23,9 +23,7 @@ class DGFactory:
     def get_distribution_generator(cls, data: dict) -> Union[DistributionGenerator, Exponential, Alpine]:
         ds_type = data["type"]
 
-        if "fixed_objects" in data:
-            return FixedRandomDG(data)
-        elif ds_type == "random":
+        if ds_type == "random":
             data = get_random_distribution(data["max_value"])
             return RandomDG(data)
         elif ds_type == "exponential":
