@@ -1,13 +1,12 @@
 import copy
 from typing import Union
 
-from moviepy.Clip import Clip
 from moviepy.video.VideoClip import ImageClip, VideoClip
 from moviepy.video.fx.crop import crop
 from moviepy.video.fx.resize import resize
 from moviepy.video.io.VideoFileClip import VideoFileClip
 
-from utils.pair import Pair
+from utility.pair import Pair
 
 
 class Video:
@@ -15,6 +14,7 @@ class Video:
     end = None
     position = None
     duration = None  # Set default to prevent possible ffmpeg error
+    fps = None
     size = None
     crop_lambda = None
     crop_x1 = None

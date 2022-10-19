@@ -5,7 +5,7 @@ from component_generator.transformergenerator import TransformerGenerator
 from config.config import Config
 from distribution_generator.dgfactory import DGFactory
 from fuzzer.fuzzer import Fuzzer
-from utils.timer import timer
+from utility.timer import timer
 
 
 class TargetedFuzzer(Fuzzer):

@@ -8,8 +8,8 @@ from moviepy.video.VideoClip import ImageClip
 from caching.cacheitem import CacheItem
 from caching.videocache import VideoCache
 from transformer.transformer import Transformer
-from utils.multiprocessinglog import logger_init, worker_init
-from utils.timer import timer
+from utility.multiprocessinglog import logger_init, worker_init
+from utility.timer import timer
 from video_generator.video import Video
 
 video_cache = VideoCache()

@@ -1,7 +1,7 @@
 import json
 import multiprocessing
 
-from utils.pair import Pair
+from utility.pair import Pair
 from pathlib import Path
 
 
@@ -35,6 +35,8 @@ class Config:
         self.object_class_distribution = object_class_distribution
         self.object_distribution = self.data.get("object_distribution", None)
         self.time_distribution = self.data.get("time_distribution", None)
+        self.model = self.data.get("model", "retinanet")
+        self.model_confidence = self.data.get("model_confidence", 0.5)
 
     def validate(self):
         params = {"duration", "fps", "media_root", "max_cores", "use_cache", "step_size", "dimension", "num_video_copies"}

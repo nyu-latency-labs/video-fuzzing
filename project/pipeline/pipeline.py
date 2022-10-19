@@ -1,17 +1,20 @@
 import copy
 import logging
 import random
+from time import perf_counter
 
 from component_generator.compositorgenerator import CompositorGenerator
 from component_generator.fuzzergenerator import FuzzerGenerator
 from config.config import Config
+from inference.modelfactory import ModelFactory
+from inference.model import Model
 from processor.metadataprocessor import MetadataProcessor
 from processor.postprocessor import PostProcessor
 from processor.preprocessor import PreProcessor
 from transformer.multitransformer import MultiTransformer
-from utils.multiprocessinglog import worker_init, logger_init
-from utils.nondaemonicprocess import NestablePool
-from utils.timer import timer
+from utility.multiprocessinglog import worker_init, logger_init
+from utility.nondaemonicprocess import NestablePool
+from utility.timer import timer
 
 
 @timer
@@ -22,8 +25,9 @@ def pipeline_task(config: Config, data: dict):
     preprocessor = PreProcessor(config)
     postprocessor = PostProcessor(config)
     meta_processor = MetadataProcessor(config)
+    model_inference = ModelFactory.get_model(config)
 
-    processing_pipeline = [preprocessor, meta_processor, multi_transformer, compositor, postprocessor]
+    processing_pipeline = [preprocessor, meta_processor, multi_transformer, compositor, postprocessor, model_inference]
 
     for processor in processing_pipeline:
         data = processor.apply(data)
@@ -39,8 +43,6 @@ class Pipeline:
         self.config = config
 
         fuzzer_processor = FuzzerGenerator(config)
-
-        # transformers = component_processor.process_transformer(config.data.get("transformers", []))
         fuzzer = fuzzer_processor.process(config.data["fuzzer"])
 
         data = {
@@ -49,31 +51,6 @@ class Pipeline:
         }
 
         fuzzer_output = fuzzer.apply(data)
-        # total_latencies = []
-        # for i in range(32, 0, -1): #cpu
-        #     logging.info("Running for processes: " + str(i))
-        #     latency = []
-        #     import os, shutil
-        #     os.makedirs("tmp/", exist_ok=True)
-        #     for j in range(1, 32): #thread
-        #         if i*j > 32:
-        #             break
-        #         data_copy = copy.deepcopy(fuzzer_output)
-        #         for idx in data_copy:
-        #             idx["max_cores"] = i
-        #             idx["max_tx_cores"] = j
-        #         logging.info("Running for thread: " + str(j))
-        #         start_time = perf_counter()
-        #         new_config = copy.deepcopy(config)
-        #         new_config.max_cores = i
-        #         self.run_pipeline(data_copy,  new_config)
-        #         end_time = perf_counter()  # 2
-        #         run_time = end_time - start_time
-        #         latency.append(run_time)
-        #     total_latencies.append(latency)
-        #     shutil.rmtree("tmp/")
-        #
-        # print(total_latencies)
 
         self.run_pipeline(fuzzer_output, config)
 
@@ -87,8 +64,8 @@ class Pipeline:
 
         results = []
         for output in fuzzer_output:
-            results.append(pool.apply_async(pipeline_task, (copy.deepcopy(config), copy.deepcopy(output),)))
-            # pipeline_task(copy.deepcopy(config), copy.deepcopy(output))
+            # results.append(pool.apply_async(pipeline_task, (copy.deepcopy(config), copy.deepcopy(output),)))
+            pipeline_task(copy.deepcopy(config), copy.deepcopy(output))
         pool.close()
 
         for r in results:

@@ -12,8 +12,8 @@ from compositor.compositor import Compositor
 from config.config import Config
 from event.event import Event, EventType
 from event.eventsimulator import EventSimulator
-from utils.timer import timer
-from utils.pair import Pair
+from utility.timer import timer
+from utility.pair import Pair
 from video_generator.video import Video
 
 

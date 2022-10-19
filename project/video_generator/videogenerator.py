@@ -3,7 +3,7 @@ import os
 from random import choice
 from typing import Tuple, List, Dict
 
-from utils.singleton import Singleton
+from utility.singleton import Singleton
 from video_generator.video import Video
 
 VIDEO_ROOT = "../resources"

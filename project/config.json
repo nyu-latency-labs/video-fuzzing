@@ -1,6 +1,6 @@
 {
-  "fps": 25,
-  "duration": 40,
+  "fps": 5,
+  "duration":5,
   "allow_overlap": false,
   "step_size": 2,
   "media_root": "../resources",
@@ -11,12 +11,6 @@
     "x": 400,
     "y": 400
   },
-  "transformers": [
-    {
-      "type": "resize_transformer",
-      "ratio": 0.9
-    }
-  ],
   "fuzzer": {
     "type": "randomized_fuzzer",
     "transformers": [
@@ -34,9 +28,7 @@
     "type": "grid_compositor"
   },
   "object_class": [
-    "car",
-    "person",
-    "motorcycle"
+    "car", "person", "bench"
   ],
   "object_distribution": {
     "type": "alpine",
@@ -46,7 +38,8 @@
   "time_distribution": {
     "type": "normal",
     "mean": 5,
-    "std": 2,
-    "fix_value": 1
-  }
+    "std": 2
+  },
+  "model": "yolo",
+  "model_confidence": 0.25
 }

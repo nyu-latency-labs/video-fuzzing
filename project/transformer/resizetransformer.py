@@ -5,8 +5,8 @@ from moviepy.editor import VideoClip
 from moviepy.video.fx.resize import resize
 
 from transformer.transformer import Transformer
-from utils.timer import timer
-from utils.pair import Pair
+from utility.timer import timer
+from utility.pair import Pair
 
 DEFAULT_DIMENSION = (100, 100)
 DEFAULT_RATIO = 1

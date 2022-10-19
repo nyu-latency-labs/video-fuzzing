@@ -10,7 +10,7 @@ from fuzzer.fuzzer import Fuzzer
 from transformer.resizetransformer import ResizeTransformer
 from transformer.rotatetransformer import RotateTransformer
 from component_generator.componentgenerator import ComponentGenerator
-from utils.timer import timer
+from utility.timer import timer
 from video_generator.videogenerator import VideoGenerator
 
 

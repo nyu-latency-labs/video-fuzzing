@@ -4,7 +4,7 @@ import os
 
 from config.config import Config
 from processor.processor import Processor
-from utils.timer import timer
+from utility.timer import timer
 
 
 class MetadataProcessor(Processor):
@@ -17,16 +17,17 @@ class MetadataProcessor(Processor):
     def apply(self, data: dict) -> dict:
         self.validate(data)
 
-        data["objects"] = [[] for i in range(self.config.duration)]
+        data["metadata"] = [[] for i in range(self.config.duration*self.config.fps)]
 
         for clip in data["clips"]:
-            for i in range(clip.start, clip.end):
-                data["objects"][i].append(clip.object_type)
+            for t in range(clip.start, clip.end):
+                for i in range(self.config.fps):
+                    data["metadata"][t*self.config.fps + i].append(clip.object_type)
 
-        output_json = {"object_distribution": data["objects"]}
+        output_json = {"object_distribution": data["metadata"]}
 
-        os.makedirs("metadata/", exist_ok=True)
-        with open("metadata/" + data["filename"] + ".json", 'w') as f:
+        os.makedirs("media/", exist_ok=True)
+        with open("media/" + data["filename"] + "_metadata.json", 'w') as f:
             json.dump(output_json, f)
 
         logging.debug(f"Saving metadata for video as {data['filename'] + '.json'}")

@@ -5,7 +5,7 @@ from moviepy.video.VideoClip import VideoClip
 
 from config.config import Config
 from processor.processor import Processor
-from utils.timer import timer
+from utility.timer import timer
 
 
 class PostProcessor(Processor):
@@ -15,7 +15,7 @@ class PostProcessor(Processor):
         self.name = "post_processor"
 
     @timer
-    def apply(self, data) -> VideoClip:
+    def apply(self, data) -> dict:
         video = data["composite_video"]
         filename = data["filename"]
 
@@ -27,9 +27,13 @@ class PostProcessor(Processor):
             filename = uuid.uuid4()
 
         os.makedirs("media/", exist_ok=True)
-        video.write_videofile("media/" + filename + ".mp4", self.config.fps, "mpeg4", audio=False, bitrate="1000k")
+        video_path = "media/" + filename + ".mp4"
+        video.write_videofile(video_path, self.config.fps, "mpeg4", audio=False)
         data["status"] = True
-        return video
+
+        data["video_path"] = video_path
+
+        return data
 
     def validate(self, data):
         raise NotImplementedError("Validate method not implemented.")
