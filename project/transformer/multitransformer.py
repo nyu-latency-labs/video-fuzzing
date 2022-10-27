@@ -39,7 +39,7 @@ def transformer_task(video: Video, use_cache: bool, tx_list: List[Transformer], 
         logging.debug(f"Saving ImageClip frame as {tmp_name}")
     else:
         tmp_name = tmp_name + str(uuid.uuid4()) + ".mp4"
-        clip.write_videofile(tmp_name, 25, "mpeg4", audio=False, bitrate="1000k")
+        clip.write_videofile(tmp_name, clip.fps, "mpeg4")
         logging.debug(f"Saving VideoClip frame as {tmp_name}")
 
     if use_cache:
@@ -64,17 +64,13 @@ class MultiTransformer(Transformer):
         self.validate(data)
 
         clips = data["clips"]
-        transformers = None
-        for tx in data["transformers"]:
-            if not tx["applied"]:
-                transformers = tx
-                break
+        transformers = data["transformers"]
 
         transformer_result = []
         logging.debug(f"Using {data['max_tx_cores']} cores")
 
         q_listener, q = logger_init()
-        pool = multiprocessing.Pool(1, worker_init, [q])
+        pool = multiprocessing.Pool(data['max_tx_cores'], worker_init, [q])
 
         with multiprocessing.Manager() as manager:
 
@@ -82,7 +78,7 @@ class MultiTransformer(Transformer):
             results = []
             for video in clips:
                 results.append(pool.apply_async(transformer_task, args=(video, data["use_cache"],
-                                                                        transformers["transformers"], multi_transformer_result)))
+                                                                        transformers, multi_transformer_result)))
                 # transformer_task(video, data["use_cache"], transformers["transformers"], multi_transformer_result)
             pool.close()
 
@@ -99,18 +95,12 @@ class MultiTransformer(Transformer):
         assert(len(clips) == len(transformer_result))
         data["clips"] = transformer_result
 
-        transformers["applied"] = True
         return data
 
     def validate(self, data: dict):
         if "clips" not in data or not data["clips"]:
             raise AssertionError("Clip list empty. Cannot transform")
 
-        for tx in data["transformers"]:
-            if not tx["applied"]:
-                break
-        else:
-            raise AssertionError("No transformer left to apply.")
 
     @classmethod
     def create_from_config(cls, data=None):

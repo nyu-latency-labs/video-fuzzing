@@ -10,6 +10,7 @@ from torchvision.utils import draw_bounding_boxes
 
 from config.config import Config
 from pipeline.pipelineunit import PipelineUnit
+from utility.timer import timer
 
 
 class Model(PipelineUnit):
@@ -24,6 +25,7 @@ class Model(PipelineUnit):
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.confidence = config.model_confidence
 
+    @timer
     def apply(self, data):
         raise NotImplementedError("Apply method not implemented.")
 
@@ -31,7 +33,7 @@ class Model(PipelineUnit):
         raise NotImplementedError("Validate method not implemented.")
 
     def predict_frame(self, frame):
-        raise NotImplementedError("Validate method not implemented.")
+        raise NotImplementedError("Predict frame method not implemented.")
 
     def clip_to_tensor(self, clip):
         frames = torch.stack([torch.from_numpy(fr).to(self.device) for fr in clip.iter_frames()])
@@ -79,9 +81,11 @@ class Model(PipelineUnit):
         return movie_clip
 
     def plot_latency_graph(self, data):
+        fig = plt.figure()
         plt.plot(data["latencies"])
         plt.ylabel('latency (ms)')
         plt.savefig("media/" + self.name + "_latencygraph_" + data["filename"] + ".png")
+        fig.clf()
 
     def get_accuracy(self, actuals, expected):
         hits = 0
@@ -115,7 +119,7 @@ class Model(PipelineUnit):
             hit_data.append(hit)
 
         precision = (0 if total_objects_det == 0 else hits * 100 / total_objects_det)
-        recall = hits * 100 / total_objects
+        recall = 0 if total_objects == 0 else hits * 100 / total_objects
         print("---------------------------")
         print(f"# objects detected: {total_objects_det}")
         print(f"# objects actually present: {total_objects}")

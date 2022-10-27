@@ -9,7 +9,6 @@ from distribution_generator.dgfactory import DGFactory
 from fuzzer.fuzzer import Fuzzer
 from transformer.resizetransformer import ResizeTransformer
 from transformer.rotatetransformer import RotateTransformer
-from component_generator.componentgenerator import ComponentGenerator
 from utility.timer import timer
 from video_generator.videogenerator import VideoGenerator
 
@@ -32,7 +31,7 @@ class RandomizedFuzzer(Fuzzer):
         self.name = "randomized_fuzzer"
 
     @timer
-    def apply(self, data):
+    def apply(self, data=None):
 
         quotient_cores = int(self.config.max_cores / self.config.video_copies)
         quotient_cores = 1 if quotient_cores < 0 else quotient_cores
@@ -47,49 +46,42 @@ class RandomizedFuzzer(Fuzzer):
             object_classes = random.sample(self.video_generator.get_object_types(), n_objects)
             object_class_distribution_input = {"type": "choice", "value": self.config.object_class_distribution["value"] or object_classes}
             object_class_distribution = DGFactory.get_distribution_generator(object_class_distribution_input)
-            logging.debug(f"Object class distribution type {object_class_distribution_input} used.")
+            logging.info(f"Object class distribution type {object_class_distribution_input} used.")
 
             # Set time distribution
             time_dist_map = self.config.time_distribution or {"type": "random", "max_value": 10}
             time_distribution = DGFactory.get_distribution_generator(time_dist_map)
-            logging.debug(f"Time distribution type {time_dist_map} used.")
+            logging.info(f"Time distribution type {time_dist_map} used.")
 
             # Set object distribution
             obj_dist_map = self.config.object_distribution or {"type": "random", "max_value": 16}
             object_distribution = DGFactory.get_distribution_generator(obj_dist_map)
-            logging.debug(f"Object distribution type {obj_dist_map} used.")
+            logging.info(f"Object distribution type {obj_dist_map} used.")
 
             # Set transformers
             transformer_list = self.config.data.get("transformers") or self.transformer_picker()
             transformer_generator = TransformerGenerator(self.config)
             transformers = transformer_generator.process(transformer_list)
-            logging.debug(f"Transformers of type {[str(tx) for tx in transformers]} picked.")
+            logging.info(f"Transformers of type {[str(tx) for tx in transformers]} picked.")
 
             # Set compositor
             compositor = self.config.data.get("compositor") or self.compositor_picker()
-            logging.debug(f"Compositor of type {str(compositor)} picked.")
-
-            _data = copy.deepcopy(data)
-
-            local_transforms = {
-                "applied": False,
-                "transformers": transformers,
-                "type": "local"
-            }
+            logging.info(f"Compositor of type {str(compositor)} picked.")
 
             obj = {
                 "object_distribution": object_distribution,
                 "time_distribution": time_distribution,
                 "object_type_distribution": object_class_distribution,
-                "filename": self.config.filename + "_" + str(i),
+                "filename": self.config.filename + "_" + str(data["idx"]) + "_" + str(i),
                 "max_tx_cores": quotient_cores,
-                "compositor": compositor
+                "compositor": compositor,
+                "transformers": transformers,
+                "use_cache": self.config.use_cache
             }
 
             logging.debug(f"Setting max tx cores as {quotient_cores}")
 
-            new_obj = {**_data, **obj, "transformers": [local_transforms]}
-            new_data.append(new_obj)
+            new_data.append(obj)
 
         return new_data
 

@@ -120,7 +120,7 @@ class GridCompositor(Compositor):
 
     def resize_clip(self, clip: VideoClip, size: Pair):
         x, y = clip.size
-        if x > y:
+        if x/size.first > y/size.second:
             return resize(clip, width=size.first)
         return resize(clip, height=size.second)
 

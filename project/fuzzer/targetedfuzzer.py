@@ -8,6 +8,7 @@ from fuzzer.fuzzer import Fuzzer
 from utility.timer import timer
 
 
+# Deprecated
 class TargetedFuzzer(Fuzzer):
 
     def __init__(self, config: Config, data=None):
@@ -30,7 +31,6 @@ class TargetedFuzzer(Fuzzer):
         self.config.pipeline_cores = min(self.config.max_cores, self.config.video_copies)
 
         for i in range(self.config.video_copies):
-
             _data = copy.deepcopy(data)
 
             local_transforms = {

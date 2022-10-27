@@ -8,7 +8,6 @@ class Fuzzer(PipelineUnit):
         self.name = "fuzzer"
         self.config = config
         self.data = data
-        self.transformers = data["transformers"]
 
     def apply(self, data):
         raise NotImplementedError("Apply method not implemented.")

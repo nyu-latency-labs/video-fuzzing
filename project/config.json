@@ -1,28 +1,22 @@
 {
   "fps": 5,
-  "duration":5,
+  "duration":40,
   "allow_overlap": false,
-  "step_size": 2,
+  "step_size": 1,
   "media_root": "../resources",
   "background_path": "../resources/street.jpg",
   "max_cores": 8,
   "use_cache": true,
   "dimension": {
-    "x": 400,
-    "y": 400
+    "x": 1920,
+    "y": 1080
   },
-  "fuzzer": {
-    "type": "randomized_fuzzer",
-    "transformers": [
+  "transformers": [
       {
-        "type": "resize_transformer",
-        "dimension": {
-          "x": 200,
-          "y": 200
-        }
+        "type": "rotate_transformer",
+        "angle": 0
       }
-    ]
-  },
+    ],
   "num_video_copies": 1,
   "compositor": {
     "type": "grid_compositor"
@@ -31,9 +25,9 @@
     "car", "person", "bench"
   ],
   "object_distribution": {
-    "type": "alpine",
-    "multiplier": 3.5,
-    "downscale": 5
+    "type": "normal",
+    "mean": 5,
+    "std": 3
   },
   "time_distribution": {
     "type": "normal",

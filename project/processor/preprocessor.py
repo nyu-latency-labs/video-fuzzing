@@ -38,7 +38,6 @@ class PreProcessor(Processor):
         object_distribution_generator = generate_distribution(data["object_distribution"],
                                                               ceil(self.config.duration / self.config.step_size))
 
-        data["fix_value"] = self.config.duration
         time_distribution_generator = data["time_distribution"]
 
         object_type_generator = data["object_type_distribution"]

@@ -6,6 +6,7 @@ from time import perf_counter
 from component_generator.compositorgenerator import CompositorGenerator
 from component_generator.fuzzergenerator import FuzzerGenerator
 from config.config import Config
+from fuzzer.randomizedfuzzer import RandomizedFuzzer
 from inference.modelfactory import ModelFactory
 from inference.model import Model
 from processor.metadataprocessor import MetadataProcessor
@@ -32,31 +33,29 @@ def pipeline_task(config: Config, data: dict):
     for processor in processing_pipeline:
         data = processor.apply(data)
 
+    return data["model_accuracy"]
+
 
 class Pipeline:
     config = None
 
     @timer
     def apply(self, filename: str):
-        random.seed(10)
         config = Config(filename)
         self.config = config
+        data = []
 
-        fuzzer_processor = FuzzerGenerator(config)
-        fuzzer = fuzzer_processor.process(config.data["fuzzer"])
+        # generate videos with 10deg diff
+        for i in range(0, 361, 10):
+            random.seed(10)
+            config.data["transformers"][0]["angle"] = i
+            fuzzer_output = RandomizedFuzzer(config).apply({"idx": i})
+            data.append(fuzzer_output[0])
 
-        data = {
-            "max_cores": self.config.max_cores,
-            "use_cache": self.config.use_cache,
-        }
-
-        fuzzer_output = fuzzer.apply(data)
-
-        self.run_pipeline(fuzzer_output, config)
+        self.run_pipeline(data, config)
 
     @timer
     def run_pipeline(self, fuzzer_output: dict, config: Config):
-
         logging.info("Using %s cores", config.pipeline_cores)
 
         q_listener, q = logger_init()
@@ -64,11 +63,21 @@ class Pipeline:
 
         results = []
         for output in fuzzer_output:
-            # results.append(pool.apply_async(pipeline_task, (copy.deepcopy(config), copy.deepcopy(output),)))
-            pipeline_task(copy.deepcopy(config), copy.deepcopy(output))
+            results.append(pool.apply_async(pipeline_task, (copy.deepcopy(config), copy.deepcopy(output),)))
+            # pipeline_task(copy.deepcopy(config), copy.deepcopy(output))
         pool.close()
 
+        data = []
         for r in results:
-            r.get()
+            data.append(r.get())
+
+        precision = []
+        recall = []
+        for d in data:
+            precision.append(d["precision"])
+            recall.append(d["recall"])
 
         pool.join()
+
+        logging.info(precision)
+        logging.info(recall)
