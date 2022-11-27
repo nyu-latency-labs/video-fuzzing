@@ -21,13 +21,15 @@ class RetinaNet(Model):
         result["fps"] = clip.fps
         result["duration"] = clip.duration
         result["filename"] = data["filename"]
-        bbox_clip = self.generate_bbox_video(clip_tensor, result)
+        if self.config.model_bbox_generate:
+            self.generate_bbox_video(clip_tensor, result)
         self.plot_latency_graph(result)
         accuracy = self.get_accuracy(data["metadata"], result["labels"])
 
-        data["model_prediction"] = result
-        data["model_bbox_clip"] = bbox_clip
-        data["model_accuracy"] = accuracy
+        model_data = {"model_prediction": result, "model_accuracy": accuracy}
+        if "inference" not in data:
+            data["inference"] = []
+        data["inference"].append(model_data)
         return data
 
     def validate(self, data):

@@ -18,7 +18,7 @@ model_mapping = {
 class ModelFactory:
 
     @classmethod
-    def get_model(cls, config):
-        if config.model in model_mapping:
-            return model_mapping[config.model](config)
+    def get_model(cls, config, model):
+        if model in model_mapping:
+            return model_mapping[model](config)
         return Yolo(config)

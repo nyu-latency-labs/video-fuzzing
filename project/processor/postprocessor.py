@@ -1,3 +1,4 @@
+import json
 import uuid
 import os
 
@@ -16,7 +17,7 @@ class PostProcessor(Processor):
 
     @timer
     def apply(self, data) -> dict:
-        video = data["composite_video"]
+        video = data["video"]
         filename = data["filename"]
 
         video = video.set_duration(self.config.duration)
@@ -32,6 +33,12 @@ class PostProcessor(Processor):
         data["status"] = True
 
         data["video_path"] = video_path
+
+        # data_to_return = {"config": data["final_config"], "metrics": data["inference"][0]["model_accuracy"]}
+        # final_json = json.dumps(data_to_return)
+        # final_data_file = open("media/" + str(uuid.uuid4()), "w")
+        # final_data_file.write(final_json)
+        # final_data_file.close()
 
         return data
 

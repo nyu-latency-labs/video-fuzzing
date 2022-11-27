@@ -105,7 +105,8 @@ class GridCompositor(Compositor):
                 final_clips.append(self.resize_clip(clip, block_size))
 
         video = CompositeVideoClip(final_clips, use_bgclip=True)
-        data["composite_video"] = video
+        video.fps = self.config.fps
+        data["video"] = video
         return data
 
     def validate(self, data: dict):
@@ -117,12 +118,6 @@ class GridCompositor(Compositor):
 
     def crop_clips(self, clip: VideoClip, size: Pair):
         return crop(clip, x1=0, y1=0, x2=size.first, y2=size.second)
-
-    def resize_clip(self, clip: VideoClip, size: Pair):
-        x, y = clip.size
-        if x/size.first > y/size.second:
-            return resize(clip, width=size.first)
-        return resize(clip, height=size.second)
 
     def position_clips(self, clips: List[Video]):
         simulator = EventSimulator()

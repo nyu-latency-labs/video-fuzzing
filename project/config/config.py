@@ -35,8 +35,10 @@ class Config:
         self.object_class_distribution = object_class_distribution
         self.object_distribution = self.data.get("object_distribution", None)
         self.time_distribution = self.data.get("time_distribution", None)
-        self.model = self.data.get("model", "retinanet")
+        self.model = self.data.get("model", ["retinanet"])
         self.model_confidence = self.data.get("model_confidence", 0.5)
+        self.video_path = self.data.get("video_path", None)
+        self.model_bbox_generate = self.data.get("model_bbox_generate", False)
 
     def validate(self):
         params = {"duration", "fps", "media_root", "max_cores", "use_cache", "step_size", "dimension", "num_video_copies"}

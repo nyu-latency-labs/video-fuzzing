@@ -24,7 +24,7 @@ class DGFactory:
         ds_type = data["type"]
 
         if ds_type == "random":
-            data = get_random_distribution(data["max_value"])
+            data = cls.get_random_distribution(data["max_value"])
             return RandomDG(data)
         elif ds_type == "exponential":
             return Exponential(data)
@@ -33,22 +33,22 @@ class DGFactory:
         else:
             return RandomDG(data)
 
+    @classmethod
+    def get_random_distribution(cls, max_value) -> dict:
+        ds_type = random.randint(0, len(DistributionType) - 1)
+        result = None
 
-def get_random_distribution(max_value) -> dict:
-    ds_type = random.randint(0, len(DistributionType) - 1)
-    result = None
+        # TODO Better formula?
+        if ds_type == 0:
+            mean = random.randint(1, max_value)
+            std = random.randint(0, int((max_value - mean) / 2))
+            result = {"type": "normal", "mean": mean, "std": std}
+        elif ds_type == 1:
+            result = {"type": "linear", "value": random.randint(1, max_value)}
+        elif ds_type == 2:
+            result = {"type": "alpine", "multiplier": random.randint(1, max_value), "downscale": random.randint(1, 10)}
+        elif ds_type == 3:
+            result = {"type": "exponential", "lambda": random.randint(1, max_value)}
 
-    # TODO Better formula?
-    if ds_type == 0:
-        mean = random.randint(1, max_value)
-        std = random.randint(0, int((max_value - mean) / 2))
-        result = {"type": "normal", "mean": mean, "std": std}
-    elif ds_type == 1:
-        result = {"type": "linear", "value": random.randint(1, max_value)}
-    elif ds_type == 2:
-        result = {"type": "alpine", "multiplier": random.randint(1, max_value), "downscale": random.randint(1, 10)}
-    elif ds_type == 3:
-        result = {"type": "exponential", "lambda": random.randint(1, max_value)}
-
-    logging.debug(f"Random distribution with value {result} created.")
-    return result
+        logging.debug(f"Random distribution with value {result} created.")
+        return result

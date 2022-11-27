@@ -1,5 +1,10 @@
+from moviepy.video.VideoClip import VideoClip
+
 from config.config import Config
 from pipeline.pipelineunit import PipelineUnit
+from moviepy.video.fx.resize import resize
+
+from utility.pair import Pair
 
 
 class Compositor(PipelineUnit):
@@ -19,3 +24,9 @@ class Compositor(PipelineUnit):
     @classmethod
     def create_from_config(cls, config: Config):
         return Compositor(config)
+
+    def resize_clip(self, clip: VideoClip, size: Pair):
+        x, y = clip.size
+        if x/size.first > y/size.second:
+            return resize(clip, width=size.first)
+        return resize(clip, height=size.second)

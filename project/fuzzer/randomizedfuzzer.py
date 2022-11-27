@@ -49,12 +49,12 @@ class RandomizedFuzzer(Fuzzer):
             logging.info(f"Object class distribution type {object_class_distribution_input} used.")
 
             # Set time distribution
-            time_dist_map = self.config.time_distribution or {"type": "random", "max_value": 10}
+            time_dist_map = self.config.time_distribution or DGFactory.get_random_distribution(10)
             time_distribution = DGFactory.get_distribution_generator(time_dist_map)
             logging.info(f"Time distribution type {time_dist_map} used.")
 
             # Set object distribution
-            obj_dist_map = self.config.object_distribution or {"type": "random", "max_value": 16}
+            obj_dist_map = self.config.object_distribution or DGFactory.get_random_distribution(16)
             object_distribution = DGFactory.get_distribution_generator(obj_dist_map)
             logging.info(f"Object distribution type {obj_dist_map} used.")
 
@@ -68,15 +68,33 @@ class RandomizedFuzzer(Fuzzer):
             compositor = self.config.data.get("compositor") or self.compositor_picker()
             logging.info(f"Compositor of type {str(compositor)} picked.")
 
+            final_config = {
+                "object_classes": object_class_distribution_input,
+                "time_distribution": time_dist_map,
+                "object_distribution": obj_dist_map,
+                "transformers": transformer_list,
+                "compositor": compositor,
+                "model": self.config.model,
+                "duration": self.config.duration,
+                "step": self.config.step_size,
+                "fps": self.config.fps,
+                "frame_size_x": self.config.frame_size.first,
+                "frame_size_y": self.config.frame_size.second
+            }
+
+            idx_str = data["idx"] + "_" if data is not None else ""
+
             obj = {
                 "object_distribution": object_distribution,
                 "time_distribution": time_distribution,
                 "object_type_distribution": object_class_distribution,
-                "filename": self.config.filename + "_" + str(data["idx"]) + "_" + str(i),
+                "filename": self.config.filename + "_" + idx_str + str(i),
                 "max_tx_cores": quotient_cores,
                 "compositor": compositor,
                 "transformers": transformers,
-                "use_cache": self.config.use_cache
+                "use_cache": self.config.use_cache,
+                "video_path": self.config.video_path,
+                "final_config": final_config
             }
 
             logging.debug(f"Setting max tx cores as {quotient_cores}")

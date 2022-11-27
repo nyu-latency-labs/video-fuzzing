@@ -82,7 +82,7 @@ class MovingCompositor(Compositor):
         logging.debug("Positioned %s clips", len(final_clips))
 
         video = CompositeVideoClip(final_clips, use_bgclip=True)
-        data["composite_video"] = video
+        data["video"] = video
         return data
 
     def validate(self, data: dict):
@@ -92,11 +92,6 @@ class MovingCompositor(Compositor):
         if any(clip is None for clip in data["clips"]):
             raise AssertionError("NoneType clips are not allowed")
 
-    def resize_clip(self, clip: VideoClip, size: Pair):
-        x, y = clip.size
-        if x > y:
-            return resize(clip, height=size.second)
-        return resize(clip, width=size.first)
 
     def position_clips(self, clips: List[Video]):
         result = []
