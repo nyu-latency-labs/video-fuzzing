@@ -23,6 +23,8 @@ class Model(PipelineUnit):
         self.name = "model"
         self.config = config
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
         self.confidence = config.model_confidence
 
     @timer
@@ -36,7 +38,7 @@ class Model(PipelineUnit):
         raise NotImplementedError("Predict frame method not implemented.")
 
     def clip_to_tensor(self, clip):
-        frames = torch.stack([torch.from_numpy(fr).to(self.device) for fr in clip.iter_frames()])
+        frames = torch.stack([torch.from_numpy(fr).to(self.device) for fr in clip.iter_frames(fps=self.config.fps)])
         return frames.permute(0, 3, 1, 2)
 
     def predict(self, frames):

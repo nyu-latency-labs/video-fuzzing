@@ -68,14 +68,14 @@ class Pipeline:
         data = []
         results = []
         for output in fuzzer_output:
-            # results.append(pool.apply_async(pipeline_task, (copy.deepcopy(config), copy.deepcopy(output),)))
-            data.append(pipeline_task(copy.deepcopy(config), copy.deepcopy(output)))
+            results.append(pool.apply_async(pipeline_task, (copy.deepcopy(config), copy.deepcopy(output),)))
+            # data.append(pipeline_task(copy.deepcopy(config), copy.deepcopy(output)))
         pool.close()
         pool.join()
 
 
-        # for r in results:
-        #     data.append(r.get())
+        for r in results:
+            data.append(r.get())
 
         # precision = []
         # recall = []
@@ -85,5 +85,5 @@ class Pipeline:
 
 
 
-        logging.info(data)
+        # logging.info(data)
         # logging.info(recall)
