@@ -9,9 +9,12 @@ class Config:
     data: dict = None
 
     # Fetch required properties and dump rest to a dictionary
-    def __init__(self, filename):
-        with open(filename) as f:
-            self.data = json.load(f)
+    def __init__(self, filename, data_dict):
+        if data_dict is not None:
+            self.data = data_dict
+        else:
+            with open(filename) as f:
+                self.data = json.load(f)
 
         self.validate()
 
@@ -30,7 +33,8 @@ class Config:
         self.frame_size: Pair = Pair(self.data["dimension"]["x"], self.data["dimension"]["y"])
         self.max_cores: int = min(self.data["max_cores"], multiprocessing.cpu_count())
         self.pipeline_cores = self.max_cores
-        self.use_cache: bool = self.data["use_cache"]
+        self.use_cache: bool = bool(self.data["use_cache"])
+        self.allow_overlap: bool = bool(self.data["allow_overlap"])
 
         self.object_class_distribution = object_class_distribution
         self.object_distribution = self.data.get("object_distribution", None)

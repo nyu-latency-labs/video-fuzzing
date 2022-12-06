@@ -107,5 +107,3 @@ result = get_data(str(os.getcwd()))
 with open("new_file.csv", "w+") as my_csv:
     csvWriter = csv.writer(my_csv, delimiter=',')
     csvWriter.writerows(result)
-
-

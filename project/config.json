@@ -12,7 +12,7 @@
     "y": 1080
   },
 
-  "num_video_copies": 2,
+  "num_video_copies": 1,
 
   "model": ["yolo"],
   "model_confidence": 0.5,

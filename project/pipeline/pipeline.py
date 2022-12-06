@@ -44,8 +44,8 @@ class Pipeline:
     config = None
 
     @timer
-    def apply(self, filename: str):
-        config = Config(filename)
+    def apply(self, filename: str = None, data_dict: dict = None):
+        config = Config(filename, data_dict)
         self.config = config
         # data = []
 
@@ -56,7 +56,7 @@ class Pipeline:
         #     fuzzer_output = RandomizedFuzzer(config).apply({"idx": i})
         #     data.append(fuzzer_output[0])
         fuzzer_output = RandomizedFuzzer(config).apply()
-        self.run_pipeline(fuzzer_output, config)
+        return self.run_pipeline(fuzzer_output, config)
 
     @timer
     def run_pipeline(self, fuzzer_output: dict, config: Config):
@@ -73,17 +73,7 @@ class Pipeline:
         pool.close()
         pool.join()
 
-
         for r in results:
             data.append(r.get())
 
-        # precision = []
-        # recall = []
-        # for d in data:
-        #     precision.append(d["precision"])
-        #     recall.append(d["recall"])
-
-
-
-        # logging.info(data)
-        # logging.info(recall)
+        return data
