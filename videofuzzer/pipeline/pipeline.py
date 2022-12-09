@@ -44,6 +44,9 @@ class Pipeline:
 
     @timer
     def apply(self, filename: str = None, data_dict: dict = None):
+        logging.basicConfig(format='[%(asctime)s] %(process)s %(filename)s:%(lineno)d %(levelname)s - %(message)s',
+                            level=logging.INFO)
+
         config = Config(filename, data_dict)
         self.config = config
         # data = []

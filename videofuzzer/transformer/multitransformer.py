@@ -69,27 +69,31 @@ class MultiTransformer(Transformer):
         transformer_result = []
         logging.debug(f"Using {data['max_tx_cores']} cores")
 
-        q_listener, q = logger_init()
-        pool = multiprocessing.Pool(data['max_tx_cores'], worker_init, [q])
-
-        with multiprocessing.Manager() as manager:
-
-            multi_transformer_result = manager.list()
-            results = []
+        if data['max_tx_cores'] == 1:
             for video in clips:
-                results.append(pool.apply_async(transformer_task, args=(video, data["use_cache"],
-                                                                        transformers, multi_transformer_result)))
-                # transformer_task(video, data["use_cache"], transformers["transformers"], multi_transformer_result)
-            pool.close()
+                transformer_task(video, data["use_cache"], transformers, transformer_result)
+        else:
+            q_listener, q = logger_init()
+            pool = multiprocessing.Pool(data['max_tx_cores'], worker_init, [q])
 
-            # To allow propagation of exceptions from child processes, otherwise they get missed.
-            for r in results:
-                r.get()
+            with multiprocessing.Manager() as manager:
 
-            pool.join()
+                multi_transformer_result = manager.list()
+                results = []
+                for video in clips:
+                    results.append(pool.apply_async(transformer_task, args=(video, data["use_cache"],
+                                                                            transformers, multi_transformer_result)))
+                    # transformer_task(video, data["use_cache"], transformers, multi_transformer_result)
+                pool.close()
 
-            for res in multi_transformer_result:
-                transformer_result.append(res)
+                # To allow propagation of exceptions from child processes, otherwise they get missed.
+                for r in results:
+                    r.get()
+
+                pool.join()
+
+                for res in multi_transformer_result:
+                    transformer_result.append(res)
 
         # Ensure we aren't missing any clips due to some bug.
         assert(len(clips) == len(transformer_result))

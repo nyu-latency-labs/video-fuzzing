@@ -12,6 +12,7 @@ class Config:
     def __init__(self, filename, data_dict):
         if data_dict is not None:
             self.data = data_dict
+            filename = "config" if filename is None else filename
         else:
             with open(filename) as f:
                 self.data = json.load(f)
