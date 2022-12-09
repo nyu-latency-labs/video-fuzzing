@@ -2,15 +2,15 @@ import logging
 from math import ceil
 from typing import List
 
-from config.config import Config
-from distribution_generator.dgfactory import DGFactory
-from distribution_generator.distributiongenerator import DistributionGenerator
-from event.event import EventType, Event
-from event.eventsimulator import EventSimulator
-from processor.processor import Processor
-from utility.timer import timer
-from video_generator.video import Video
-from video_generator.videogenerator import VideoGenerator
+from ..config.config import Config
+from ..distribution_generator.dgfactory import DGFactory
+from ..distribution_generator.distributiongenerator import DistributionGenerator
+from ..event.event import EventType, Event
+from ..event.eventsimulator import EventSimulator
+from ..processor.processor import Processor
+from ..utility.timer import timer
+from ..video_generator.video import Video
+from ..video_generator.videogenerator import VideoGenerator
 
 
 def generate_distribution(distribution_generator: DistributionGenerator, count: int) -> List[int]:

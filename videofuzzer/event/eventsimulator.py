@@ -3,7 +3,7 @@ import logging
 from typing import Optional
 from typing import List
 
-from event.event import EventType, Event
+from ..event.event import EventType, Event
 
 
 class EventSimulator:

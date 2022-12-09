@@ -3,8 +3,8 @@ import os
 from random import choice
 from typing import Tuple, List, Dict
 
-from utility.singleton import Singleton
-from video_generator.video import Video
+from ..utility.singleton import Singleton
+from ..video_generator.video import Video
 
 VIDEO_ROOT = "../resources"
 JSON_PATH = "config.json"

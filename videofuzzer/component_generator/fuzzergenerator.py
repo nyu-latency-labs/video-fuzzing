@@ -1,7 +1,7 @@
-from component_generator.componentgenerator import ComponentGenerator
-from fuzzer.fuzzer import Fuzzer
-from fuzzer.randomizedfuzzer import RandomizedFuzzer
-from fuzzer.targetedfuzzer import TargetedFuzzer
+from ..component_generator.componentgenerator import ComponentGenerator
+from ..fuzzer.fuzzer import Fuzzer
+from ..fuzzer.randomizedfuzzer import RandomizedFuzzer
+from ..fuzzer.targetedfuzzer import TargetedFuzzer
 
 
 class FuzzerGenerator(ComponentGenerator):

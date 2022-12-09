@@ -3,7 +3,7 @@ import os
 import shutil
 import sys
 
-from pipeline.pipeline import Pipeline
+from videofuzzer.pipeline.pipeline import Pipeline
 
 if __name__ == "__main__":
     logging.basicConfig(format='[%(asctime)s] %(process)s %(filename)s:%(lineno)d %(levelname)s - %(message)s', level=logging.DEBUG)

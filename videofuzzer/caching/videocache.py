@@ -1,9 +1,9 @@
 from typing import Optional
 from typing import List, Dict
 
-from caching.cacheitem import CacheItem
-from transformer.transformer import Transformer
-from utility.singleton import Singleton
+from ..caching.cacheitem import CacheItem
+from ..transformer.transformer import Transformer
+from ..utility.singleton import Singleton
 
 
 class VideoCache(metaclass=Singleton):

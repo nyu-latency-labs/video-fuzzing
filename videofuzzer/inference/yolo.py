@@ -2,8 +2,8 @@ import numpy
 import torch
 from moviepy.video.io.VideoFileClip import VideoFileClip
 
-from config.config import Config
-from inference.model import Model
+from ..config.config import Config
+from ..inference.model import Model
 
 
 class Yolo(Model):

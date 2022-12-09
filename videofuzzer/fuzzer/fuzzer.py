@@ -1,5 +1,5 @@
-from config.config import Config
-from pipeline.pipelineunit import PipelineUnit
+from ..config.config import Config
+from ..pipeline.pipelineunit import PipelineUnit
 
 
 class Fuzzer(PipelineUnit):

@@ -1,19 +1,18 @@
 import copy
 import logging
-import random
 
-from component_generator.compositorgenerator import CompositorGenerator
-from config.config import Config
-from fuzzer.randomizedfuzzer import RandomizedFuzzer
-from inference.modelfactory import ModelFactory
-from processor.finalprocessor import FinalProcessor
-from processor.metadataprocessor import MetadataProcessor
-from processor.postprocessor import PostProcessor
-from processor.preprocessor import PreProcessor
-from transformer.multitransformer import MultiTransformer
-from utility.multiprocessinglog import worker_init, logger_init
-from utility.nondaemonicprocess import NestablePool
-from utility.timer import timer
+from ..component_generator.compositorgenerator import CompositorGenerator
+from ..config.config import Config
+from ..fuzzer.randomizedfuzzer import RandomizedFuzzer
+from ..inference.modelfactory import ModelFactory
+from ..processor.finalprocessor import FinalProcessor
+from ..processor.metadataprocessor import MetadataProcessor
+from ..processor.postprocessor import PostProcessor
+from ..processor.preprocessor import PreProcessor
+from ..transformer.multitransformer import MultiTransformer
+from ..utility.multiprocessinglog import worker_init, logger_init
+from ..utility.nondaemonicprocess import NestablePool
+from ..utility.timer import timer
 
 
 @timer

@@ -1,8 +1,8 @@
 from moviepy.video.io.VideoFileClip import VideoFileClip
 from torchvision.models.detection import ssd300_vgg16, SSD300_VGG16_Weights
 
-from config.config import Config
-from inference.model import Model
+from ..config.config import Config
+from ..inference.model import Model
 
 
 class SDD(Model):

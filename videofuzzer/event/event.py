@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any
 
-from video_generator.video import Video
+from ..video_generator.video import Video
 
 
 class EventType(Enum):

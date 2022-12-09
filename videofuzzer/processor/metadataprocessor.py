@@ -2,9 +2,9 @@ import json
 import logging
 import os
 
-from config.config import Config
-from processor.processor import Processor
-from utility.timer import timer
+from ..config.config import Config
+from ..processor.processor import Processor
+from ..utility.timer import timer
 
 
 class MetadataProcessor(Processor):

@@ -1,4 +1,4 @@
-from transformer.transformer import Transformer
+from ..transformer.transformer import Transformer
 from typing import Set, List
 
 

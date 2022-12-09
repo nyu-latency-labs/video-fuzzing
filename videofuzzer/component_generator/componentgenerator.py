@@ -1,5 +1,5 @@
-from pipeline.pipelineunit import PipelineUnit
-from utility.singleton import Singleton
+from ..pipeline.pipelineunit import PipelineUnit
+from ..utility.singleton import Singleton
 
 
 class ComponentGenerator(metaclass=Singleton):

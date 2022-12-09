@@ -1,4 +1,4 @@
-from pipeline.pipelineunit import PipelineUnit
+from ..pipeline.pipelineunit import PipelineUnit
 
 
 class Transformer(PipelineUnit):

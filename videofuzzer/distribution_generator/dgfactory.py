@@ -3,11 +3,11 @@ from enum import IntEnum
 import random
 from typing import Union
 
-from distribution_generator.distributiongenerator import DistributionGenerator
-from distribution_generator.fixedrandomdg import FixedRandomDG
-from distribution_generator.randomdg import RandomDG
-from distribution_generator.stateful_generator.alpine import Alpine
-from distribution_generator.stateful_generator.exponential import Exponential
+from ..distribution_generator.distributiongenerator import DistributionGenerator
+from ..distribution_generator.fixedrandomdg import FixedRandomDG
+from ..distribution_generator.randomdg import RandomDG
+from ..distribution_generator.stateful_generator.alpine import Alpine
+from ..distribution_generator.stateful_generator.exponential import Exponential
 
 
 class DistributionType(IntEnum):

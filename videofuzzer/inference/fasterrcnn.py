@@ -1,8 +1,8 @@
 from moviepy.video.io.VideoFileClip import VideoFileClip
 from torchvision.models.detection import fasterrcnn_resnet50_fpn_v2, FasterRCNN_ResNet50_FPN_V2_Weights
 
-from config.config import Config
-from inference.model import Model
+from ..config.config import Config
+from ..inference.model import Model
 
 
 class FasterRCNN(Model):

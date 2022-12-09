@@ -1,12 +1,9 @@
 import json
 import uuid
-import os
 
-from moviepy.video.VideoClip import VideoClip
-
-from config.config import Config
-from processor.processor import Processor
-from utility.timer import timer
+from ..config.config import Config
+from ..processor.processor import Processor
+from ..utility.timer import timer
 
 
 class FinalProcessor(Processor):

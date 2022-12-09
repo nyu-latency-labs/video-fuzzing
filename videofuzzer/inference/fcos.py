@@ -1,8 +1,8 @@
 from moviepy.video.io.VideoFileClip import VideoFileClip
 from torchvision.models.detection import fcos_resnet50_fpn, FCOS_ResNet50_FPN_Weights
 
-from config.config import Config
-from inference.model import Model
+from ..config.config import Config
+from ..inference.model import Model
 
 
 class FCOS(Model):

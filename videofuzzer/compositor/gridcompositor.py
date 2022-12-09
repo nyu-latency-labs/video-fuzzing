@@ -8,13 +8,13 @@ from moviepy.video.compositing.CompositeVideoClip import CompositeVideoClip
 from moviepy.video.fx.crop import crop
 from moviepy.video.fx.resize import resize
 
-from compositor.compositor import Compositor
-from config.config import Config
-from event.event import Event, EventType
-from event.eventsimulator import EventSimulator
-from utility.timer import timer
-from utility.pair import Pair
-from video_generator.video import Video
+from ..compositor.compositor import Compositor
+from ..config.config import Config
+from ..event.event import Event, EventType
+from ..event.eventsimulator import EventSimulator
+from ..utility.timer import timer
+from ..utility.pair import Pair
+from ..video_generator.video import Video
 
 
 def get_closest_square(num: int) -> int:

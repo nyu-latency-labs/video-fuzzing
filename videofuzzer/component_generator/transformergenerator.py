@@ -1,9 +1,9 @@
 from typing import List
 
-from component_generator.componentgenerator import ComponentGenerator
-from transformer.resizetransformer import ResizeTransformer
-from transformer.rotatetransformer import RotateTransformer
-from transformer.transformer import Transformer
+from ..component_generator.componentgenerator import ComponentGenerator
+from ..transformer.resizetransformer import ResizeTransformer
+from ..transformer.rotatetransformer import RotateTransformer
+from ..transformer.transformer import Transformer
 
 
 class TransformerGenerator(ComponentGenerator):

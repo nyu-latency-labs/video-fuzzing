@@ -1,7 +1,7 @@
 import random
 from typing import Callable
 
-from distribution_generator.distributiongenerator import DistributionGenerator
+from ..distribution_generator.distributiongenerator import DistributionGenerator
 
 
 class RandomDG(DistributionGenerator):

@@ -1,7 +1,7 @@
-from component_generator.componentgenerator import ComponentGenerator
-from compositor.compositor import Compositor
-from compositor.gridcompositor import GridCompositor
-from compositor.movingcompositor import MovingCompositor
+from ..component_generator.componentgenerator import ComponentGenerator
+from ..compositor.compositor import Compositor
+from ..compositor.gridcompositor import GridCompositor
+from ..compositor.movingcompositor import MovingCompositor
 
 
 class CompositorGenerator(ComponentGenerator):

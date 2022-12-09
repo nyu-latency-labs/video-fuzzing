@@ -8,9 +8,9 @@ import torch
 from moviepy.video.VideoClip import VideoClip
 from torchvision.utils import draw_bounding_boxes
 
-from config.config import Config
-from pipeline.pipelineunit import PipelineUnit
-from utility.timer import timer
+from ..config.config import Config
+from ..pipeline.pipelineunit import PipelineUnit
+from ..utility.timer import timer
 
 
 class Model(PipelineUnit):

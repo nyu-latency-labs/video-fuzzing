@@ -1,10 +1,10 @@
 from moviepy.video.VideoClip import VideoClip
 
-from config.config import Config
-from pipeline.pipelineunit import PipelineUnit
+from ..config.config import Config
+from ..pipeline.pipelineunit import PipelineUnit
 from moviepy.video.fx.resize import resize
 
-from utility.pair import Pair
+from ..utility.pair import Pair
 
 
 class Compositor(PipelineUnit):

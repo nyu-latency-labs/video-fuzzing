@@ -1,9 +1,9 @@
-from inference.fasterrcnn import FasterRCNN
-from inference.fcos import FCOS
-from inference.maskrcnn import MaskRCNN
-from inference.retinanet import RetinaNet
-from inference.sdd import SDD
-from inference.yolo import Yolo
+from ..inference.fasterrcnn import FasterRCNN
+from ..inference.fcos import FCOS
+from ..inference.maskrcnn import MaskRCNN
+from ..inference.retinanet import RetinaNet
+from ..inference.sdd import SDD
+from ..inference.yolo import Yolo
 
 model_mapping = {
     "yolo": Yolo,

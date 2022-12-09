@@ -4,9 +4,9 @@ from enum import Enum
 from moviepy.editor import VideoClip
 from moviepy.video.fx.resize import resize
 
-from transformer.transformer import Transformer
-from utility.timer import timer
-from utility.pair import Pair
+from ..transformer.transformer import Transformer
+from ..utility.timer import timer
+from ..utility.pair import Pair
 
 DEFAULT_DIMENSION = (100, 100)
 DEFAULT_RATIO = 1

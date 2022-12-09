@@ -1,7 +1,7 @@
 import json
 import multiprocessing
 
-from utility.pair import Pair
+from ..utility.pair import Pair
 from pathlib import Path
 
 

@@ -3,14 +3,14 @@ import logging
 import random
 from enum import IntEnum
 
-from component_generator.transformergenerator import TransformerGenerator
-from config.config import Config
-from distribution_generator.dgfactory import DGFactory
-from fuzzer.fuzzer import Fuzzer
-from transformer.resizetransformer import ResizeTransformer
-from transformer.rotatetransformer import RotateTransformer
-from utility.timer import timer
-from video_generator.videogenerator import VideoGenerator
+from ..component_generator.transformergenerator import TransformerGenerator
+from ..config.config import Config
+from ..distribution_generator.dgfactory import DGFactory
+from ..fuzzer.fuzzer import Fuzzer
+from ..transformer.resizetransformer import ResizeTransformer
+from ..transformer.rotatetransformer import RotateTransformer
+from ..utility.timer import timer
+from ..video_generator.videogenerator import VideoGenerator
 
 
 class TransformerTypes(IntEnum):

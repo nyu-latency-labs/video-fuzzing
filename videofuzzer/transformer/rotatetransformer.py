@@ -5,8 +5,8 @@ import random
 from moviepy.video.VideoClip import ImageClip, VideoClip
 from moviepy.video.fx.rotate import rotate as video_rotate
 
-from transformer.transformer import Transformer
-from utility.timer import timer
+from ..transformer.transformer import Transformer
+from ..utility.timer import timer
 
 
 class RotateTransformer(Transformer):

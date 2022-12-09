@@ -6,7 +6,7 @@ from moviepy.video.fx.crop import crop
 from moviepy.video.fx.resize import resize
 from moviepy.video.io.VideoFileClip import VideoFileClip
 
-from utility.pair import Pair
+from ..utility.pair import Pair
 
 
 class Video:

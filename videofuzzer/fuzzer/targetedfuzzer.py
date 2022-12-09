@@ -1,11 +1,11 @@
 import copy
 import logging
 
-from component_generator.transformergenerator import TransformerGenerator
-from config.config import Config
-from distribution_generator.dgfactory import DGFactory
-from fuzzer.fuzzer import Fuzzer
-from utility.timer import timer
+from ..component_generator.transformergenerator import TransformerGenerator
+from ..config.config import Config
+from ..distribution_generator.dgfactory import DGFactory
+from ..fuzzer.fuzzer import Fuzzer
+from ..utility.timer import timer
 
 
 # Deprecated
