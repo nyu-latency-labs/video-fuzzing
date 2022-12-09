@@ -64,18 +64,22 @@ class Pipeline:
     def run_pipeline(self, fuzzer_output: dict, config: Config):
         logging.info("Using %s cores", config.pipeline_cores)
 
-        q_listener, q = logger_init()
-        pool = NestablePool(config.pipeline_cores, worker_init, [q])
-
         data = []
-        results = []
-        for output in fuzzer_output:
-            results.append(pool.apply_async(pipeline_task, (copy.deepcopy(config), copy.deepcopy(output),)))
-            # data.append(pipeline_task(copy.deepcopy(config), copy.deepcopy(output)))
-        pool.close()
-        pool.join()
 
-        for r in results:
-            data.append(r.get())
+        if config.pipeline_cores == 1:
+            for output in fuzzer_output:
+                data.append(pipeline_task(copy.deepcopy(config), copy.deepcopy(output)))
+        else:
+            q_listener, q = logger_init()
+            pool = NestablePool(config.pipeline_cores, worker_init, [q])
+
+            results = []
+            for output in fuzzer_output:
+                results.append(pool.apply_async(pipeline_task, (copy.deepcopy(config), copy.deepcopy(output),)))
+            pool.close()
+            pool.join()
+
+            for r in results:
+                data.append(r.get())
 
         return data
