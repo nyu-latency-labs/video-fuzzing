@@ -16,6 +16,7 @@ class Yolo(Model):
 
     @timer
     def apply(self, data: dict):
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True).to(self.device)
         clip = data["video"]
         clip_tensor = self.clip_to_tensor(clip)

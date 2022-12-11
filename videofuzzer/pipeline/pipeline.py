@@ -46,8 +46,7 @@ class Pipeline:
 
     @timer
     def apply(self, filename: str = None, data_dict: list = None, ncpus=1):
-        logging.basicConfig(format='[%(asctime)s] %(process)s %(filename)s:%(lineno)d %(levelname)s - %(message)s',
-                            level=logging.INFO)
+
 
         # to support old method to fetch data
         # python main.py config.json
@@ -64,10 +63,11 @@ class Pipeline:
                 ncpus = min(input["max_cores"], multiprocessing.cpu_count())
 
         else:
+            # assuming only single output for data dict
             for ddict in data_dict:
                 config = Config(ddict)
                 fuzzer_output = RandomizedFuzzer(config).apply()
-                data.append((config, fuzzer_output))
+                data.append((config, fuzzer_output[0]))
 
         return self.run_pipeline(data, ncpus)
 

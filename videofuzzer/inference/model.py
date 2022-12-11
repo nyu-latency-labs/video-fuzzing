@@ -22,7 +22,7 @@ class Model(PipelineUnit):
     def __init__(self, config: Config):
         self.name = "model"
         self.config = config
-        self.device = "cpu" #"cuda" if torch.cuda.is_available() else "cpu"
+        self.device = "cpu"
         # if torch.cuda.is_available():
         #     torch.cuda.empty_cache()
         self.confidence = config.model_confidence
