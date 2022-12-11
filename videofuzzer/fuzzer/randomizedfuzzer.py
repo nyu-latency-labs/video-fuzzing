@@ -34,7 +34,7 @@ class RandomizedFuzzer(Fuzzer):
     def apply(self, data=None):
 
         quotient_cores = int(self.config.max_cores / self.config.video_copies)
-        quotient_cores = 1 if quotient_cores < 0 else quotient_cores
+        quotient_cores = 1 if quotient_cores <= 0 else quotient_cores
         self.config.pipeline_cores = min(self.config.max_cores, self.config.video_copies)
 
         new_data = []

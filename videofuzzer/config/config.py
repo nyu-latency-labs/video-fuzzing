@@ -9,13 +9,9 @@ class Config:
     data: dict = None
 
     # Fetch required properties and dump rest to a dictionary
-    def __init__(self, filename, data_dict):
-        if data_dict is not None:
-            self.data = data_dict
-            filename = "config" if filename is None else filename
-        else:
-            with open(filename) as f:
-                self.data = json.load(f)
+    def __init__(self, data_dict):
+        self.data = data_dict
+        filename = data_dict["filename"] if "filename" in data_dict else "config"
 
         self.validate()
 

@@ -3,6 +3,7 @@ from torchvision.models.detection import ssd300_vgg16, SSD300_VGG16_Weights
 
 from ..config.config import Config
 from ..inference.model import Model
+from ..utility.timer import timer
 
 
 class SDD(Model):
@@ -13,6 +14,7 @@ class SDD(Model):
         self.model = ssd300_vgg16(weights=self.weights, score_thresh=self.confidence).to(self.device).eval()
         self.pre_processor = self.weights.transforms()
 
+    @timer
     def apply(self, data: dict):
         clip = VideoFileClip(data["video_path"])
         clip_tensor = self.clip_to_tensor(clip)

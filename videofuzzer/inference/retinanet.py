@@ -3,6 +3,7 @@ from torchvision.models.detection import retinanet_resnet50_fpn_v2, RetinaNet_Re
 
 from ..config.config import Config
 from ..inference.model import Model
+from ..utility.timer import timer
 
 
 class RetinaNet(Model):
@@ -14,6 +15,7 @@ class RetinaNet(Model):
             self.device).eval()
         self.pre_processor = self.weights.transforms()
 
+    @timer
     def apply(self, data: dict):
         clip = VideoFileClip(data["video_path"])
         clip_tensor = self.clip_to_tensor(clip)

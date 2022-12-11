@@ -3,6 +3,7 @@ from torchvision.models.detection import fcos_resnet50_fpn, FCOS_ResNet50_FPN_We
 
 from ..config.config import Config
 from ..inference.model import Model
+from ..utility.timer import timer
 
 
 class FCOS(Model):
@@ -13,6 +14,7 @@ class FCOS(Model):
         self.model = fcos_resnet50_fpn(weights=self.weights, score_thresh=self.confidence).to(self.device).eval()
         self.pre_processor = self.weights.transforms()
 
+    @timer
     def apply(self, data: dict):
         clip = VideoFileClip(data["video_path"])
         clip_tensor = self.clip_to_tensor(clip)

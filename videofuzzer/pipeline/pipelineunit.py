@@ -1,5 +1,8 @@
 # Global interface for all pipeline elements
 # All data is passed as a data object
+from videofuzzer.utility.singleton import Singleton
+
+
 class PipelineUnit:
     """
     Basic building block for all pipeline components

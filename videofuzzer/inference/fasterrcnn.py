@@ -3,6 +3,7 @@ from torchvision.models.detection import fasterrcnn_resnet50_fpn_v2, FasterRCNN_
 
 from ..config.config import Config
 from ..inference.model import Model
+from ..utility.timer import timer
 
 
 class FasterRCNN(Model):
@@ -14,6 +15,7 @@ class FasterRCNN(Model):
             self.device).eval()
         self.pre_processor = self.weights.transforms()
 
+    @timer
     def apply(self, data: dict):
         clip = VideoFileClip(data["video_path"])
         clip_tensor = self.clip_to_tensor(clip)

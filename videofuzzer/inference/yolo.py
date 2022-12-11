@@ -1,19 +1,23 @@
 import numpy
 import torch
-from moviepy.video.io.VideoFileClip import VideoFileClip
 
 from ..config.config import Config
 from ..inference.model import Model
+from ..utility.timer import timer
 
 
 class Yolo(Model):
+    instance = None
+
     def __init__(self, config: Config):
         super().__init__(config)
+        self.model = None
         self.name = "model_yolo"
-        self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True).to(self.device)
 
+    @timer
     def apply(self, data: dict):
-        clip = data["video"] #VideoFileClip(data["video_path"])
+        self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True).to(self.device)
+        clip = data["video"]
         clip_tensor = self.clip_to_tensor(clip)
         result = self.predict(clip_tensor)
         result["fps"] = clip.fps

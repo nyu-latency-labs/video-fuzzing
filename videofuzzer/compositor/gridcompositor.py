@@ -104,14 +104,14 @@ class GridCompositor(Compositor):
             for clip in positioned_clips:
                 final_clips.append(self.resize_clip(clip, block_size))
 
-        video = CompositeVideoClip(final_clips, use_bgclip=True)
+        video = CompositeVideoClip(final_clips)
         video.fps = self.config.fps
         data["video"] = video
         return data
 
     def validate(self, data: dict):
-        if "clips" not in data or not data["clips"]:
-            raise AssertionError("Clip list empty. Cannot composite")
+        # if "clips" not in data or not data["clips"]:
+        #     raise AssertionError("Clip list empty. Cannot composite")
 
         if any(clip is None for clip in data["clips"]):
             raise AssertionError("NoneType clips are not allowed")

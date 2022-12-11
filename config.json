@@ -3,16 +3,15 @@
   "duration":30,
   "allow_overlap": false,
   "step_size": 1,
-  "media_root": "../resources",
-  "background_path": "../resources/street.jpg",
-  "max_cores": 1,
+  "media_root": "/proj/nyu-bdbml-class-PG0/video-fuzzing/resources",
+  "background_path": "/proj/nyu-bdbml-class-PG0/video-fuzzing/resources/street.jpg",
+  "max_cores": 32,
   "use_cache": true,
   "dimension": {
     "x": 1920,
     "y": 1080
   },
-
-  "num_video_copies": 1,
+  "num_video_copies": 32,
 
   "model": ["yolo"],
   "model_confidence": 0.5,

@@ -81,13 +81,13 @@ class MovingCompositor(Compositor):
 
         logging.debug("Positioned %s clips", len(final_clips))
 
-        video = CompositeVideoClip(final_clips, use_bgclip=True)
+        video = CompositeVideoClip(final_clips)
         data["video"] = video
         return data
 
     def validate(self, data: dict):
-        if "clips" not in data or not data["clips"]:
-            raise AssertionError("Clip list empty. Cannot composite")
+        # if "clips" not in data or not data["clips"]:
+        #     raise AssertionError("Clip list empty. Cannot composite")
 
         if any(clip is None for clip in data["clips"]):
             raise AssertionError("NoneType clips are not allowed")

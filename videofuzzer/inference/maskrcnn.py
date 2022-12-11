@@ -3,6 +3,7 @@ from torchvision.models.detection import maskrcnn_resnet50_fpn_v2, MaskRCNN_ResN
 
 from ..config.config import Config
 from ..inference.model import Model
+from ..utility.timer import timer
 
 
 class MaskRCNN(Model):
@@ -13,6 +14,7 @@ class MaskRCNN(Model):
         self.model = maskrcnn_resnet50_fpn_v2(weights=self.weights, score_thresh=self.confidence).to(self.device).eval()
         self.pre_processor = self.weights.transforms()
 
+    @timer
     def apply(self, data: dict):
         clip = VideoFileClip(data["video_path"])
         clip_tensor = self.clip_to_tensor(clip)

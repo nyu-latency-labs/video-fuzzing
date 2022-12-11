@@ -1,5 +1,7 @@
 import copy
+import json
 import logging
+import multiprocessing
 
 from ..component_generator.compositorgenerator import CompositorGenerator
 from ..config.config import Config
@@ -16,7 +18,7 @@ from ..utility.timer import timer
 
 
 @timer
-def pipeline_task(config: Config, data: dict):
+def pipeline_task(config: Config, data: dict, idx: int):
     compositor_generator = CompositorGenerator(config)
     compositor = compositor_generator.process(data["compositor"])
     multi_transformer = MultiTransformer(config)
@@ -43,39 +45,48 @@ class Pipeline:
     config = None
 
     @timer
-    def apply(self, filename: str = None, data_dict: dict = None):
+    def apply(self, filename: str = None, data_dict: list = None, ncpus=1):
         logging.basicConfig(format='[%(asctime)s] %(process)s %(filename)s:%(lineno)d %(levelname)s - %(message)s',
                             level=logging.INFO)
 
-        config = Config(filename, data_dict)
-        self.config = config
-        # data = []
+        # to support old method to fetch data
+        # python main.py config.json
+        # data_dict method to support calling as lib
+        data = []
+        if filename is not None:
+            with open(filename) as f:
+                input = json.load(f)
+                input["filename"] = filename
+                config = Config(input)
+                fuzzer_output = RandomizedFuzzer(config).apply()
+                for fout in fuzzer_output:
+                    data.append((config, fout))
+                ncpus = min(input["max_cores"], multiprocessing.cpu_count())
 
-        # generate videos with 10deg diff
-        # for i in range(0, 1, 10):
-        #     random.seed(10)
-        #     config.data["transformers"][0]["angle"] = i
-        #     fuzzer_output = RandomizedFuzzer(config).apply({"idx": i})
-        #     data.append(fuzzer_output[0])
-        fuzzer_output = RandomizedFuzzer(config).apply()
-        return self.run_pipeline(fuzzer_output, config)
+        else:
+            for ddict in data_dict:
+                config = Config(ddict)
+                fuzzer_output = RandomizedFuzzer(config).apply()
+                data.append((config, fuzzer_output))
+
+        return self.run_pipeline(data, ncpus)
 
     @timer
-    def run_pipeline(self, fuzzer_output: dict, config: Config):
-        logging.info("Using %s cores", config.pipeline_cores)
+    def run_pipeline(self, fuzzer_outputs: list, ncpus: int):
+        logging.info("Using %s cores", ncpus)
 
         data = []
 
-        if config.pipeline_cores == 1:
-            for output in fuzzer_output:
-                data.append(pipeline_task(copy.deepcopy(config), copy.deepcopy(output)))
+        if ncpus == 1:
+            for idx, output in enumerate(fuzzer_outputs):
+                data.append(pipeline_task(output[0], output[1], idx, ))
         else:
             q_listener, q = logger_init()
-            pool = NestablePool(config.pipeline_cores, worker_init, [q])
+            pool = NestablePool(ncpus, worker_init, [q])
 
             results = []
-            for output in fuzzer_output:
-                results.append(pool.apply_async(pipeline_task, (copy.deepcopy(config), copy.deepcopy(output),)))
+            for idx, output in enumerate(fuzzer_outputs):
+                results.append(pool.apply_async(pipeline_task, (output[0], output[1], idx,)))
             pool.close()
             pool.join()
 

@@ -102,9 +102,9 @@ class MultiTransformer(Transformer):
         return data
 
     def validate(self, data: dict):
-        if "clips" not in data or not data["clips"]:
-            raise AssertionError("Clip list empty. Cannot transform")
-
+        # if "clips" not in data or not data["clips"]:
+        #     raise AssertionError("Clip list empty. Cannot transform")
+        pass
 
     @classmethod
     def create_from_config(cls, data=None):

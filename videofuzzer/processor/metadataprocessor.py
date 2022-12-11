@@ -34,5 +34,4 @@ class MetadataProcessor(Processor):
         return data
 
     def validate(self, data):
-        if "clips" not in data or not data["clips"]:
-            raise AssertionError("Clip list empty. Cannot transform")
+        pass
